@@ -2,7 +2,6 @@ from airflow.sdk import DAG
 from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.standard.operators.python import PythonOperator
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from airflow.utils.dates import days_ago
 from datetime import timedelta
 
 sql_text = "SELECT [pao_status_name] FROM [Angstrem].[mg1].[pao_status]"
