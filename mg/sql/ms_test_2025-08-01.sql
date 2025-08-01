@@ -1,1 +1,0 @@
-INSERT INTO [mgtest].[af_test] VALUES(1, NULL, GETDATE() )
