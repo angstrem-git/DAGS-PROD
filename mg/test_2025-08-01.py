@@ -20,4 +20,10 @@ with DAG(
     sql='sql/ms_test_2025-08-01.sql' 
     )
 
-t1 
+    t2 = SQLExecuteQueryOperator(
+    task_id='t2',
+    conn_id='mssql_olap_main',
+    sql='sql/ms_test_2025-08-01.sql' 
+    )
+
+t1 >> t2
