@@ -8,7 +8,7 @@ with DAG(
     dag_id="ms_art_add_2025-08-01",
     description="Заполнение таблицы [mg2].[art] новыми номенклатурами",
     schedule="@daily",
-    start_date=datetime(2025, 8, 2),
+    start_date=datetime(2025, 8, 1),
     tags=['mg'],
 ) as dag:
 
