@@ -17,7 +17,7 @@ with DAG(
     t1 = SQLExecuteQueryOperator(
     task_id='t1',
     conn_id='mssql_olap_main',
-    sql=sql_text 
+    sql='sql/ms_test_2025-08-01.sql' 
     )
 
 t1 
