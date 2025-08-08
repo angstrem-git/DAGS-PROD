@@ -7,7 +7,7 @@ from pendulum import datetime
 with DAG(
     dag_id="ms_insert_monitoring_refresh_bi_report",
     description="Заполнение таблицы [mg2].[monitoring_refresh_bi_report] - мониторинг автоматического обновления отчетов в Power BI Report Server",
-    schedule="@daily",
+    schedule="0 8 * * *",	# каждый день в 8:00 утра
     start_date=datetime(2025, 8, 8, 8, 0, 0, 0, tz='Europe/Moscow'),
     catchup=True,
     tags=['mg'],
