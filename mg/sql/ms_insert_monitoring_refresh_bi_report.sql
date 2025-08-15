@@ -21,6 +21,7 @@ INSERT INTO [mg2].[monitoring_refresh_bi_report](
     ,[ScheduleModifiedDate] 
     ,[LastStatusSubscriptions] 
     ,[LastRunTimeSubscriptions] 
+    ,[ContentSizeBytes]
 )
 SELECT 
     rep.[Name] 				
@@ -42,7 +43,8 @@ SELECT
     ,us_sch.[UserName] 		
     ,sub.[ModifiedDate] 	
     ,sub.[LastStatus] 		
-    ,sub.[LastRunTime] 		
+    ,sub.[LastRunTime] 
+    ,rep.[ContentSize]	
 FROM 
 	[ReportServerMain].[dbo].[Subscriptions] 			AS sub
 	LEFT JOIN [ReportServerMain].[dbo].[ReportSchedule] AS rs ON sub.[SubscriptionID] = rs.[SubscriptionID]
