@@ -17,7 +17,7 @@ with DAG(
     t1 = SSHOperator(
     task_id='t1',
     ssh_conn_id='mssql_olap_main',
-    command=	""" sqlcmd \ 
+    command=	r""" sqlcmd \ 
 		-S {{ conn.mssql_olap_main.host }} \ 
 		-d {{ conn.mssql_olap_main.schema }} \ 
 		-U {{ conn.mssql_olap_main.login }} \ 
@@ -31,7 +31,7 @@ with DAG(
     t2 = SSHOperator(
     task_id='t2',
     ssh_conn_id='mssql_olap_main',
-    command=	""" powershell '
+    command=	r""" powershell '
 		-Command "Get-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_unicode.csv | \ 
 		Set-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_utf8.csv -Encoding utf8" 
 		"""
