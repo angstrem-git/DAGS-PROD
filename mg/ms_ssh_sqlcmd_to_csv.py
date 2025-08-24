@@ -18,7 +18,7 @@ with DAG(
     task_id='t1',
     ssh_conn_id='mssql_olap_main',
     command=	r""" sqlcmd \ 
-		-S {{ conn.mssql_olap_main.host }} \ 
+		-S {{ conn.mssql_olap_main.host }},{{ conn.mssql_olap_main.port }} \ 
 		-d {{ conn.mssql_olap_main.schema }} \ 
 		-U {{ conn.mssql_olap_main.login }} \ 
 		-P {{ conn.mssql_olap_main.password }} \ 
