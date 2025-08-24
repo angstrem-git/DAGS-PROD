@@ -17,13 +17,13 @@ with DAG(
     t1 = SSHOperator(
     task_id='t1',
     ssh_conn_id='mssql_olap_main',
-    command='sqlcmd -S {{ conn.mssql_olap_main.host }} -d {{ conn.mssql_olap_main.schema }} -U {{ conn.mssql_olap_main.login }} -P {{ conn.mssql_olap_main.password }} -Q 'SET NOCOUNT ON; SELECT order_id, order_guid, order_numder, phone FROM Angstrem.mgtest.phone' -W -s';' -u -o 'C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_unicode.csv'',
+    command='sqlcmd -S {{ conn.mssql_olap_main.host }} -d {{ conn.mssql_olap_main.schema }} -U {{ conn.mssql_olap_main.login }} -P {{ conn.mssql_olap_main.password }} -Q 'SET NOCOUNT ON; SELECT order_id, order_guid, order_numder, phone FROM Angstrem.mgtest.phone' -W -s';' -u -o 'C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_unicode.csv''
     )
 
     t2 = SSHOperator(
     task_id='t2',
     ssh_conn_id='mssql_olap_main',
-    command='powershell -Command 'Get-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_unicode.csv | Set-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_utf8.csv -Encoding utf8'',
+    command='powershell -Command 'Get-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_unicode.csv | Set-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_utf8.csv -Encoding utf8''
     )
 
 t1 >> t2
