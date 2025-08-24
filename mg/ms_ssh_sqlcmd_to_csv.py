@@ -1,7 +1,7 @@
 from airflow.sdk import DAG
 from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.standard.operators.python import PythonOperator
-from airflow.providers.standard.operators.ssh import SSHOperator
+from airflow.providers.ssh.operators.ssh import SSHOperator
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from pendulum import datetime
 
