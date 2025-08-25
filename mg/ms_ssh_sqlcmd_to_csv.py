@@ -29,7 +29,7 @@ with DAG(
 
     t2 = BashOperator(
     task_id='t2',
-    bash_command=r""" powershell '
+    bash_command_x=r""" powershell '
 		-Command "Get-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_unicode.csv | \ 
 		Set-Content C:\Users\M.Grapenyuk\Documents\mg\test\file_phone_utf8.csv -Encoding utf8" 
 		"""
