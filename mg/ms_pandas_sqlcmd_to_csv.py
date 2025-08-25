@@ -21,10 +21,7 @@ def export_to_csv():
     conn = pyodbc.connect(conn_str)
     
     # SQL-запрос
-    query = """
-        SELECT order_id, order_guid, order_number, phone
-        FROM Angstrem.mgtest.phone
-    """
+    query = """SELECT order_id, order_guid, phone FROM Angstrem.mgtest.phone"""
     
     # Чтение в DataFrame
     df = pd.read_sql(query, conn)
