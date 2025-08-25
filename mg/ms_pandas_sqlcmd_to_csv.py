@@ -39,8 +39,9 @@ def export_to_csv():
 dag = DAG(
     'mssql_export_csv',
     start_date=datetime(2025, 8, 25),
-    schedule_interval=None,  # Однократный запуск
-    catchup=False
+    schedule=None,  # Однократный запуск
+    catchup=False,
+    tags=['mg'],
 )
 
 # PythonOperator для выполнения функции
