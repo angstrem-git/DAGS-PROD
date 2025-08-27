@@ -8,7 +8,7 @@ with DAG(
     dag_id="ms_insert_snapshot_presale_order_sale",
     description="Заполнение таблиц [mgtest].[presale_snapshot], [mgtest].[order_snapshot], [mgtest].[sale_snapshot]",
     schedule="@daily",	# каждый день в 0:00 утра
-    start_date=datetime(2025, 8, 26, 0, 0, 0, 0, tz='Europe/Moscow'),
+    start_date=datetime(2025, 8, 26, 3, 30, 0, 0, tz='Europe/Moscow'),
     catchup=True,
     tags=['mg'],
 ) as dag:
