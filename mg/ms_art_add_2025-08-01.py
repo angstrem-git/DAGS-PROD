@@ -48,4 +48,10 @@ with DAG(
     sql='sql/ms_art_type_update.sql'
     )
 
-t1 >> t2 >> t3 >> t4 >> t5 >> t6
+    t7 = SQLExecuteQueryOperator(
+    task_id='t7',
+    conn_id='mssql_olap_main',
+    sql='sql/ms_art_corporate_add.sql'
+    )
+
+t1 >> t2 >> t3 >> t4 >> t5 >> t6 >> t7
