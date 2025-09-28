@@ -1,4 +1,4 @@
-﻿-- mg, 2025-09-27
+-- mg, 2025-09-27
 -- Изменить [mg1].[stocks_snapshot].[nomenclature_id] по значению [nomenclature_property_id]
 
 UPDATE cte
