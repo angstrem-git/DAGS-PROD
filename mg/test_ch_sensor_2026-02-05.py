@@ -6,7 +6,6 @@
 
 from airflow.decorators import dag, task
 from datetime import datetime
-from clickhouse_connect import Client
 from airflow.providers.http.hooks.http import HttpHook
 
 
