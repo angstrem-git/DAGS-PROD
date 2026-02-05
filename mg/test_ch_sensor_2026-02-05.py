@@ -98,7 +98,7 @@ def test_sensor_2026_02_05():
     # ---------- обычная task = PythonOperator ----------
     @task
     def process_data():
-	return insert_into_process_table()
+        return insert_into_process_table()
 
     # зависимости
     wait_for_new_batch() >> process_data()	
