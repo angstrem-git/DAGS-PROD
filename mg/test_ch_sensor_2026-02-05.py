@@ -7,23 +7,19 @@
 from airflow.decorators import dag, task
 from datetime import datetime
 from clickhouse_connect import Client
+from airflow.providers.http.hooks.http import HttpHook
 
-# параметры подключения к ClickHouse
-CLICKHOUSE_HOST = "clickhouse.angstrem.net"
-CLICKHOUSE_PORT = 9000
-CLICKHOUSE_USER = "clickhouse"
-CLICKHOUSE_PASSWORD = "Bgt%rfc4"
-CLICKHOUSE_DATABASE = "test"
+
+def run_query(query: str):
+    hook = HttpHook(method="POST", http_conn_id="click_onpremise_http")
+    response = hook.run(
+        endpoint="",
+        data=query,
+        headers={"Content-Type": "text/plain"},
+    )
+    return response.text
 
 def check_new_batch():
-
-    client = Client(
-    	host=CLICKHOUSE_HOST,
-    	port=CLICKHOUSE_PORT,
-    	username=CLICKHOUSE_USER,
-      	password=CLICKHOUSE_PASSWORD,
-        database=CLICKHOUSE_DATABASE
-    )
 
     # пример: проверяем, что появилась хотя бы одна запись за последний час
     query = """
@@ -37,22 +33,17 @@ def check_new_batch():
 	ORDER BY finished_sourse_datetime
 	LIMIT 1
     """
-    result = client.query(query)
-    count = result.result_rows[0][0]  # получаем число записей
+    result = run_query(query)
+    return int(result.strip()) > 0
+
+    #count = result.result_rows[0][0]  # получаем число записей
+    #return count > 0
 
     # True → Sensor завершился успешно
     # False → Sensor будет ждать следующей попытки
-    return count > 0
+
 
 def insert_into_process_table():
-
-    client = Client(
-    	host=CLICKHOUSE_HOST,
-    	port=CLICKHOUSE_PORT,
-    	username=CLICKHOUSE_USER,
-      	password=CLICKHOUSE_PASSWORD,
-        database=CLICKHOUSE_DATABASE
-    )
 
     # вставляем строку в таблицу
     query = """
@@ -67,9 +58,7 @@ def insert_into_process_table():
 	ORDER BY finished_sourse_datetime
 	LIMIT 1
     """	
-    result = client.query(query)
-
-    return True
+    run_query(query)
 
 
 @dag(
