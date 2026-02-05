@@ -67,6 +67,9 @@ def insert_into_process_table():
 	ORDER BY finished_sourse_datetime
 	LIMIT 1
     """	
+    result = client.query(query)
+
+    return True
 
 
 @dag(
