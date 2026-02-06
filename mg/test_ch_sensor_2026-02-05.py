@@ -54,7 +54,7 @@ def insert_into_process_table():
     	INSERT INTO test.sensor_processed_batches (batch_id, table_name)
     	SELECT batch_id, table_name
 	FROM test.sensor_load_batches
-	WHERE table_name = 'sensor_load_batches'
+	WHERE table_name = 'sensor_fact_table'
   	AND batch_id NOT IN (
       		SELECT batch_id
       		FROM test.sensor_processed_batches
