@@ -24,7 +24,7 @@ def check_new_batch():
     query = """
     	SELECT count()			# В сенсоре всегда использовать count() - это золотое правило сенсоров
 	FROM test.sensor_load_batches
-	WHERE table_name = 'sensor_load_batches'
+	WHERE table_name = 'sensor_fact_table'
   	AND batch_id NOT IN (
       		SELECT batch_id
       		FROM test.sensor_processed_batches
