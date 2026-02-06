@@ -32,6 +32,8 @@ def check_new_batch():
     """
     result = run_query(query).strip()
     
+    print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
+
     if not result:
         return False
 
