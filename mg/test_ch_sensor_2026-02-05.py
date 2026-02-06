@@ -22,7 +22,7 @@ def check_new_batch():
 
     # пример: проверяем, что появилась хотя бы одна запись за последний час
     query = """
-    	SELECT batch_id
+    	SELECT count()			# В сенсоре всегда использовать count() - это золотое правило сенсоров
 	FROM test.sensor_load_batches
 	WHERE table_name = 'sensor_load_batches'
   	AND batch_id NOT IN (
@@ -32,8 +32,13 @@ def check_new_batch():
 	ORDER BY finished_sourse_datetime
 	LIMIT 1
     """
-    result = run_query(query)
-    return int(result.strip()) > 0
+    result = run_query(query).strip()
+    
+    if not result:
+        return False
+
+    # ClickHouse по HTTP всегда вернёт число	
+    return int(result) > 0
 
     #count = result.result_rows[0][0]  # получаем число записей
     #return count > 0
