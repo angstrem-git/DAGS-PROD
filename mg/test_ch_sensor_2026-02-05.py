@@ -29,8 +29,6 @@ def check_new_batch():
       		SELECT batch_id
       		FROM test.sensor_processed_batches
   	)
-	ORDER BY finished_sourse_datetime
-	LIMIT 1
     """
     result = run_query(query).strip()
     
