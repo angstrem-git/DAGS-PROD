@@ -5,8 +5,10 @@
 #from pendulum import datetime
 
 from airflow.decorators import dag, task
-from datetime import datetime
 from airflow.providers.http.hooks.http import HttpHook
+from airflow.providers.ssh.operators.ssh import SSHOperator
+from airflow.hooks.base import BaseHook
+from datetime import datetime
 
 
 def run_query(query: str):
@@ -65,6 +67,25 @@ def insert_into_process_table():
     run_query(query)
 
 
+@task
+def run_remote_etl():
+
+    ch = BaseHook.get_connection("click_onpremise_http")
+
+    env = f"""
+    export CLICKHOUSE_URL="http://{ch.host}:{ch.port}"
+    export CLICKHOUSE_USER="{ch.login}"
+    export CLICKHOUSE_PASSWORD="{ch.password}"
+    export CLICKHOUSE_DATABASE="{ch.extra_dejson.get('database', 'default')}"
+    """
+
+    return f"""
+    set -e
+    {env}
+    python3 /home/airflowetl/MG/test_etl/test_my_clickhouse_job.py
+    """
+
+
 @dag(
     dag_id="test_sensor_2026_02_05",
     start_date=datetime(2026, 2, 5),
@@ -93,8 +114,18 @@ def test_sensor_2026_02_05():
     def process_data():
         return insert_into_process_table()
 
+
+    command_x = run_remote_etl()
+
+    SSHOperator(
+        task_id="ssh_run_etl",
+        ssh_conn_id="airflowetl_ssh",
+        command=command_x,
+    )
+
+
     # зависимости
-    wait_for_new_batch() >> process_data()	
+    wait_for_new_batch() >> process_data() >> ssh_run_etl	
 
     # wait_for_new_batch() - не выполняет код, а создаёт SensorOperator в DAG, она становится Task объектом DAG.
     # wait_for_new_data() — это Sensor Task. Airflow не выполняет её сразу. Scheduler каждые poke_interval секунд вызывает внутри этой задачи функцию, которая проверяет условие.
