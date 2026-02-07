@@ -117,7 +117,7 @@ def test_sensor_2026_02_05():
 
     command_x = run_remote_etl()
 
-    SSHOperator(
+    ssh_run_etl = SSHOperator(
         task_id="ssh_run_etl",
         ssh_conn_id="airflowetl_ssh",
         command=command_x,
@@ -125,7 +125,7 @@ def test_sensor_2026_02_05():
 
 
     # зависимости
-    wait_for_new_batch() >> process_data() >> ssh_run_etl	
+    wait_for_new_batch() >> process_data() >> ssh_run_etl
 
     # wait_for_new_batch() - не выполняет код, а создаёт SensorOperator в DAG, она становится Task объектом DAG.
     # wait_for_new_data() — это Sensor Task. Airflow не выполняет её сразу. Scheduler каждые poke_interval секунд вызывает внутри этой задачи функцию, которая проверяет условие.
