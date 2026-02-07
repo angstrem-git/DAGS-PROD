@@ -76,7 +76,7 @@ def run_remote_etl():
     export CLICKHOUSE_URL="http://{ch.host}:{ch.port}"
     export CLICKHOUSE_USER="{ch.login}"
     export CLICKHOUSE_PASSWORD="{ch.password}"
-    export CLICKHOUSE_DATABASE="{ch.extra_dejson.get('database', 'default')}"
+    export CLICKHOUSE_DATABASE="{ch.extra_dejson.get('database', 'test')}"
     """
 
     return f"""
