@@ -67,7 +67,7 @@ def insert_into_process_table():
     run_query(query)
 
 
-@task
+#@task
 def run_remote_etl():
 
     ch = BaseHook.get_connection("click_onpremise_http")
