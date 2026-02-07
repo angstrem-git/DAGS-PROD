@@ -70,7 +70,7 @@ def insert_into_process_table():
 #@task
 def run_remote_etl():
 
-    ch = BaseHook.get_connection("click_onpremise_http")
+    ch = BaseHook.get_connection("click_onpremise_http_etl")
 
     env = f"""
     export CLICKHOUSE_URL="http://{ch.host}:{ch.port}"
