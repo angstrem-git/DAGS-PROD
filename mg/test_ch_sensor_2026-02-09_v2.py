@@ -119,7 +119,7 @@ def compare_checksums(batch_id: str) -> bool:
     SELECT
         check_type,
         check_value
-    FROM sensor_check_batches
+    FROM test.sensor_check_batches
     WHERE batch_id = '{batch_id}'
       AND table_name = 'sensor_fact_table'
     FORMAT JSON
@@ -141,7 +141,7 @@ def compare_checksums(batch_id: str) -> bool:
         count()              AS row_count,
         sum(qty)             AS sum_qty,
         countDistinct(order) AS distinct_orders
-    FROM sensor_fact_table
+    FROM test.sensor_fact_table
     WHERE batch_id = '{batch_id}'
     FORMAT JSON
     """
