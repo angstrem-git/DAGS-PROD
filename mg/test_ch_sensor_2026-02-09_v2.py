@@ -27,11 +27,11 @@ def run_query_text(sql: str):
 
 def run_query_json(sql: str):
 # Результат запроса - в формате json
-
-    hook = HttpHook(
-        method="POST",
-        http_conn_id="click_onpremise_http",
-    )
+	
+	hook = HttpHook(
+		method="POST",
+		http_conn_id="click_onpremise_http",
+	)
 	response = hook.run(
 		endpoint="/",
 		data=sql,
