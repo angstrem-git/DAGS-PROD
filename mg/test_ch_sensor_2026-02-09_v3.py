@@ -192,24 +192,16 @@ def check_batch(**context):
 	ti.xcom_push(key="batch_id", value=batch_id)
 
 
-#def notify_failure(**context):
+def notify_failure(context):
 #	ti = context["task_instance"]
 #	error = context.get("exception")
-#	send_email(
-#		to=["M.Grapenyuk@angstrem.net"],
+	send_email(
+		to=["M.Grapenyuk@angstrem.net"],
+		subject="mg_error"
 #		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
 #		body=str(error),
 #		html_content=f"<pre>{error}</pre>",
-#	)
-
-def notify_failure():
-	send_email(
-		to=["M.Grapenyuk@angstrem.net"],
-		subject="mg1_subject_error",
-		body="mg2_body=_error",
-		html_content="mg3_html_content_error",
 	)
-
 
 
 def insert_into_process_table(**context):
