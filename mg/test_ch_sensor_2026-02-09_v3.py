@@ -192,15 +192,24 @@ def check_batch(**context):
 	ti.xcom_push(key="batch_id", value=batch_id)
 
 
-def notify_failure(**context):
-	ti = context["task_instance"]
-	error = context.get("exception")
+#def notify_failure(**context):
+#	ti = context["task_instance"]
+#	error = context.get("exception")
+#	send_email(
+#		to=["M.Grapenyuk@angstrem.net"],
+#		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
+#		body=str(error),
+#		html_content=f"<pre>{error}</pre>",
+#	)
+
+def notify_failure():
 	send_email(
 		to=["M.Grapenyuk@angstrem.net"],
-		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
-		body=str(error),
-		html_content=f"<pre>{error}</pre>",
+		subject="mg1_subject_error",
+		body="mg2_body=_error",
+		html_content="mg3_html_content_error",
 	)
+
 
 
 def insert_into_process_table(**context):
@@ -269,7 +278,7 @@ def test_sensor_2026_02_05():
 
 	# 2.--------------------------------------------------------------------------------------	
 	check_task = PythonOperator(
-		task_id="check_batch_id",
+		task_id="check_task",
 		python_callable=check_batch,
 		on_failure_callback=notify_failure
 	)
@@ -296,7 +305,7 @@ def test_sensor_2026_02_05():
 	command_x = run_remote_etl()
 
 	ssh_run_etl = SSHOperator(
-		task_id="ssh_run_etl_id",
+		task_id="ssh_run_etl",
 		ssh_conn_id="airflowetl_ssh",
 		command=command_x,
 	)
