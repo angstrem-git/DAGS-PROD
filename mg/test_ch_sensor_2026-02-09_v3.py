@@ -10,9 +10,20 @@ from airflow.providers.ssh.operators.ssh import SSHOperator
 from airflow.providers.standard.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
 from airflow.utils.email import send_email
+
 from datetime import datetime
 from decimal import Decimal
 
+# Для логирования
+import logging
+log = logging.getLogger(__name__)
+# Уровни логов (очень полезно)
+# log.debug()		- очень подробная отладка
+# log.info()		- нормальный ход выполнения
+# log.warning()		- странно, но не падаем
+# log.error()		- падаем или почти
+# log.exception()	- error + stacktrace
+# Пример. log.info("Необработанный результат от ClickHouse: %s", result)
 
 def run_query_text(sql: str):
 # Результат запроса - в формате текст. Если в запросе указать SELECT ... FORMAT TSV, то в виде (value11\tvalue12\tvalue13\nvalue21\tvalue22\tvalue23\n)
@@ -87,7 +98,8 @@ def check_new_batch(**context):
     """
 	result = run_query_text(query).strip()
     
-	print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
+	#print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
+	log.info("Необработанный результат от ClickHouse: %s", result)
 
 	if not result:
 		return False
@@ -100,6 +112,12 @@ def check_new_batch(**context):
 		value=result
 	)
 
+	# **context - в PythonOperator контекст — это словарь со всем, что Airflow знает о текущем запуске task (о TaskInstance)
+	# Проверка содержимого:
+	for k in sorted(context.keys()):
+		#print(k)
+		log.info(k)
+
     # ClickHouse по HTTP всегда вернёт число	
     #return int(result) > 0
 
@@ -109,10 +127,7 @@ def check_new_batch(**context):
     # True → Sensor завершился успешно
     # False → Sensor будет ждать следующей попытки
 
-	# **context - в PythonOperator контекст — это словарь со всем, что Airflow знает о текущем запуске task (о TaskInstance)
-	# Проверка содержимого:
-	for k in sorted(context.keys()):
-		print(k)
+
 
 
 def compare_checksums(batch_id: str) -> bool:
@@ -186,7 +201,8 @@ def check_batch(**context):
 		raise ValueError(f"Несоответствие контрольных сумм для батча {batch_id}")
 	# raise ValueError(...) - немедленно прерывает выполнение функции, никакой return дальше не выполняется, исключение «вылетает наружу» в Airflow
 
-	print(f"Контрольные суммы в порядке для батча {batch_id}")
+	#print(f"Контрольные суммы в порядке для батча {batch_id}")
+	log.info("Контрольные суммы в порядке для батча %s", batch_id)
 
 	# (опционально) пробросим дальше
 	ti.xcom_push(key="batch_id", value=batch_id)
@@ -194,20 +210,20 @@ def check_batch(**context):
 
 def notify_failure(context):
 	try:
-	#	ti = context["task_instance"]
-	#	error = context.get("exception")
+		ti = context["task_instance"]
+		error = context.get("exception")
 		send_email(
 			to=["M.Grapenyuk@angstrem.net"],
 			subject="mg_error",
 			html_content=f"""
 			<h3>MG: Task failed</h3>
 			""",
-	#		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
-	#		body=str(error),
-	#		html_content=f"<pre>{error}</pre>",
+			subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
+			body=str(error),
 		)
 	except Exception as e:
-		print(f"Failed to send email: {e}")
+		#print(f"Failed to send email: {e}")
+		log.error("Failed to send email: %s", e:)
 
 
 def insert_into_process_table(**context):
@@ -220,7 +236,8 @@ def insert_into_process_table(**context):
 		key="batch_id"
 	)
 
-	print("Обрабатываемый батч:", batch_id)
+	#print("Обрабатываемый батч:", batch_id)
+	log.info("Обрабатываемый батч: %s", batch_id)
 
     # вставляем строку в таблицу
 	query = f"""
@@ -372,3 +389,11 @@ dag = test_sensor_2026_02_05()
 #     ...
 # }
 # Airflow сам формирует этот словарь и передаёт его в Task.
+
+# В Airflow есть два разных мира:
+# (1) Парсинг DAG-файла (scheduler)		(нет runtime, нет данных, нет XCom, print() почти бесполезен)
+# (2) Выполнение task (worker)			(есть context, есть ti, есть XCom, есть реальные значения, есть логи)
+# Поэтому отлаживать нужно код внутри task, а не DAG как скрипт.
+# Логи — это твой главный debugger
+
+# Можно и нужно отделять свои логи от системных. Делается это не через print(), а через logging.
