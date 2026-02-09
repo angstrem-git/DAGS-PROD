@@ -24,6 +24,7 @@ log = logging.getLogger(__name__)
 # log.error()		- падаем или почти
 # log.exception()	- error + stacktrace
 # Пример. log.info("Необработанный результат от ClickHouse: %s", result)
+# MG: не увидел в этом удобства. Print() лучше, т.к. в Logs можно фильтровать по Source = Task
 
 def run_query_text(sql: str):
 # Результат запроса - в формате текст. Если в запросе указать SELECT ... FORMAT TSV, то в виде (value11\tvalue12\tvalue13\nvalue21\tvalue22\tvalue23\n)
@@ -72,6 +73,12 @@ def run_query_json(sql: str):
 
 def check_new_batch(**context):
 
+	# **context - в PythonOperator контекст — это словарь со всем, что Airflow знает о текущем запуске task (о TaskInstance)
+	# Проверка содержимого:
+	for k in sorted(context.keys()):
+		print(k)
+		#log.info(k)
+
     # Проверяем, что появилась хотя бы одна запись (SELECT count() - в сенсоре всегда использовать count() - это золотое правило сенсоров, но нам нужен конкретный batch_id)
 	sql_count = """
     	SELECT count()							
@@ -99,7 +106,7 @@ def check_new_batch(**context):
 	result = run_query_text(query).strip()
     
 	print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
-	log.info("Необработанный результат от ClickHouse: %s", result)
+	#log.info("Необработанный результат от ClickHouse: %s", result)
 
 	if not result:
 		return False
@@ -111,12 +118,6 @@ def check_new_batch(**context):
 		key="batch_id",
 		value=result
 	)
-
-	# **context - в PythonOperator контекст — это словарь со всем, что Airflow знает о текущем запуске task (о TaskInstance)
-	# Проверка содержимого:
-	for k in sorted(context.keys()):
-		#print(k)
-		log.info(k)
 
     # ClickHouse по HTTP всегда вернёт число	
     #return int(result) > 0
@@ -201,8 +202,8 @@ def check_batch(**context):
 		raise ValueError(f"Несоответствие контрольных сумм для батча {batch_id}")
 	# raise ValueError(...) - немедленно прерывает выполнение функции, никакой return дальше не выполняется, исключение «вылетает наружу» в Airflow
 
-	#print(f"Контрольные суммы в порядке для батча {batch_id}")
-	log.info("Контрольные суммы в порядке для батча %s", batch_id)
+	print(f"Контрольные суммы в порядке для батча {batch_id}")
+	#log.info("Контрольные суммы в порядке для батча %s", batch_id)
 
 	# (опционально) пробросим дальше
 	ti.xcom_push(key="batch_id", value=batch_id)
@@ -220,8 +221,8 @@ def notify_failure(context):
 			""",
 		)
 	except Exception as e:
-		#print(f"Failed to send email: {e}")
-		log.error("Failed to send email: %s", e)
+		print(f"Failed to send email: {e}")
+		#log.error("Failed to send email: %s", e)
 
 
 def insert_into_process_table(**context):
@@ -234,8 +235,8 @@ def insert_into_process_table(**context):
 		key="batch_id"
 	)
 
-	#print("Обрабатываемый батч:", batch_id)
-	log.info("Обрабатываемый батч: %s", batch_id)
+	print("Обрабатываемый батч:", batch_id)
+	#log.info("Обрабатываемый батч: %s", batch_id)
 
     # вставляем строку в таблицу
 	query = f"""
