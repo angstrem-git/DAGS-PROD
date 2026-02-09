@@ -218,8 +218,6 @@ def notify_failure(context):
 			html_content=f"""
 			<h3>MG: Task failed</h3>
 			""",
-			subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
-			body=str(error),
 		)
 	except Exception as e:
 		#print(f"Failed to send email: {e}")
