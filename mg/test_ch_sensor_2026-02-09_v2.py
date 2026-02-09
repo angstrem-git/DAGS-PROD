@@ -60,6 +60,18 @@ def run_query_json(sql: str):
 def check_new_batch(**context):
 
     # Проверяем, что появилась хотя бы одна запись (SELECT count() - в сенсоре всегда использовать count() - это золотое правило сенсоров, но нам нужен конкретный batch_id)
+	sql_count = """
+    	SELECT count()							
+		FROM test.sensor_load_batches
+		WHERE table_name = 'sensor_fact_table'
+  			AND batch_id NOT IN (
+      			SELECT batch_id
+      			FROM test.sensor_processed_batches
+  			)
+    """
+	check_count = int(run_query_text(sql_count).strip())
+	
+	# Считываем новый batch_id
 	query = """
     	SELECT batch_id								
 		FROM test.sensor_load_batches
@@ -89,8 +101,8 @@ def check_new_batch(**context):
     # ClickHouse по HTTP всегда вернёт число	
     #return int(result) > 0
 
-	count = result.result_rows[0][0]  # получаем число записей
-	return count > 0
+	#count = result.result_rows[0][0]  # получаем число записей
+	return check_count > 0
 
     # True → Sensor завершился успешно
     # False → Sensor будет ждать следующей попытки
