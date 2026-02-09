@@ -60,7 +60,7 @@ def run_query_json(sql: str):
 def check_new_batch(**context):
 
     # Проверяем, что появилась хотя бы одна запись (SELECT count() - в сенсоре всегда использовать count() - это золотое правило сенсоров, но нам нужен конкретный batch_id)
-    query = """
+	query = """
     	SELECT batch_id								
 		FROM test.sensor_load_batches
 		WHERE table_name = 'sensor_fact_table'
@@ -71,26 +71,26 @@ def check_new_batch(**context):
 		ORDER BY finished_sourse_datetime
 		LIMIT 1
     """
-    result = run_query_text(query).strip()
+	result = run_query_text(query).strip()
     
-    print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
+	print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
 
-    if not result:
-        return False
+	if not result:
+		return False
 
 	# ti — это TaskInstance. «Дай мне экземпляр текущей задачи, которая прямо сейчас выполняется».
 	ti = context["ti"]
 	# ЯВНО пишем в XCom
-    ti.xcom_push(
-        key="batch_id",
-        value=result
-    )
+	ti.xcom_push(
+		key="batch_id",
+		value=result
+	)
 
     # ClickHouse по HTTP всегда вернёт число	
     #return int(result) > 0
 
-    count = result.result_rows[0][0]  # получаем число записей
-    return count > 0
+	count = result.result_rows[0][0]  # получаем число записей
+	return count > 0
 
     # True → Sensor завершился успешно
     # False → Sensor будет ждать следующей попытки
@@ -98,7 +98,7 @@ def check_new_batch(**context):
 	# **context - в PythonOperator контекст — это словарь со всем, что Airflow знает о текущем запуске task (о TaskInstance)
 	# Проверка содержимого:
 	for k in sorted(context.keys()):
-        print(k)
+		print(k)
 
 
 def compare_checksums(batch_id: str) -> bool:
@@ -160,34 +160,34 @@ def insert_into_process_table(**context):
 	# ti — это TaskInstance. «Дай мне экземпляр текущей задачи, которая прямо сейчас выполняется».
 	ti = context["ti"]
 
-    batch_id = ti.xcom_pull(
-        task_ids="check_batch",
-        key="batch_id"
-    )
+	batch_id = ti.xcom_pull(
+		task_ids="check_batch",
+		key="batch_id"
+	)
 
 	print("Обрабатываемый батч:", batch_id)
 
     # вставляем строку в таблицу
-    query = """
+	query = """
     	INSERT INTO test.sensor_processed_batches (batch_id, table_name)
     	({batch_id}, 'sensor_fact_table')
     """	
-    run_query_text(query)
+	run_query_text(query)
 
 
 ########## @task
 def run_remote_etl():
 
-    ch = BaseHook.get_connection("click_onpremise_http_etl")
+	ch = BaseHook.get_connection("click_onpremise_http_etl")
 
-    env = f"""
+	env = f"""
     export CLICKHOUSE_URL="http://{ch.host}:{ch.port}"
     export CLICKHOUSE_USER="{ch.login}"
     export CLICKHOUSE_PASSWORD="{ch.password}"
     export CLICKHOUSE_DATABASE="{ch.extra_dejson.get('database', 'test')}"
     """
 
-    return f"""
+	return f"""
     set -e
     {env}
     python3 /home/airflowetl/MG/test_etl/test_my_clickhouse_job.py
@@ -195,26 +195,26 @@ def run_remote_etl():
 
 
 @dag(
-    dag_id="test_sensor_2026_02_XX",
-    start_date=datetime(2026, 2, 5),
-    schedule=None,
-    #schedule="0 10 * * *",  # запускается каждый день в 10:00
-    catchup=False,			# По умолчанию (catchup=True) Airflow пытается “догнать” все пропущенные даты пока не дойдёт до сегодняшнего дня. catchup=False — не догоняем прошлое
-    tags=['test'],
+	dag_id="test_sensor_2026_02_XX",
+	start_date=datetime(2026, 2, 5),
+	schedule=None,
+	#schedule="0 10 * * *",  # запускается каждый день в 10:00
+	catchup=False,			# По умолчанию (catchup=True) Airflow пытается “догнать” все пропущенные даты пока не дойдёт до сегодняшнего дня. catchup=False — не догоняем прошлое
+	tags=['test'],
 )
 def test_sensor_2026_02_05():
 
     # ---------- SENSOR ----------
-    @task.sensor(
-        poke_interval=30,		# Как часто спрашиваем = через каждые 30 секунд
-        timeout=300,			# Сколько вообще готовы ждать = 300 секунд. Если now - start_time > timeout, Sensor падает с ошибкой (SensorTimeout)
+	@task.sensor(
+		poke_interval=30,		# Как часто спрашиваем = через каждые 30 секунд
+		timeout=300,			# Сколько вообще готовы ждать = 300 секунд. Если now - start_time > timeout, Sensor падает с ошибкой (SensorTimeout)
 					# Sensor будет повторять poke каждые 30 секунд, пока суммарное время с момента первого poke не превысит 300 секунд.
-        mode="reschedule"		# Держим ли worker или нет. 
+		mode="reschedule"		# Держим ли worker или нет. 
 					# mode="poke" - ждать «на месте», worker заблокирован. mode="reschedule" - ждать «в стороне», worker освобождён. mode="reschedule" - лучше!
 					# mode="reschedule": Sensor освобождает worker между poke
-    )
-    def wait_for_new_batch(**context):
-        return check_new_batch(**context)	# Scheduler вызывает check_new_batch() каждый poke_interval, пока timeout не истечёт
+	)
+	def wait_for_new_batch(**context):
+		return check_new_batch(**context)	# Scheduler вызывает check_new_batch() каждый poke_interval, пока timeout не истечёт
 					# check_data_exists(): Должна быть быстрой, потому что вызывается каждые poke_interval секунд. Возвращает только True/False.
 
 	# TaskFlow API
@@ -242,22 +242,22 @@ def test_sensor_2026_02_05():
 
 
     # ---------- обычная task = PythonOperator ----------
-    @task
-    def process_data(**context):
-        return insert_into_process_table(**context)
+	@task
+	def process_data(**context):
+		return insert_into_process_table(**context)
 
 
-    command_x = run_remote_etl()
+	command_x = run_remote_etl()
 
-    ssh_run_etl = SSHOperator(
-        task_id="ssh_run_etl",
-        ssh_conn_id="airflowetl_ssh",
-        command=command_x,
-    )
+	ssh_run_etl = SSHOperator(
+		task_id="ssh_run_etl",
+		ssh_conn_id="airflowetl_ssh",
+		command=command_x,
+	)
 
 
     # зависимости
-    wait_for_new_batch() >> check_batch() >> process_data() >> ssh_run_etl
+	wait_for_new_batch() >> check_batch() >> process_data() >> ssh_run_etl
 
     # wait_for_new_batch() - не выполняет код, а создаёт SensorOperator в DAG, она становится Task объектом DAG.
     # wait_for_new_data() — это Sensor Task. Airflow не выполняет её сразу. Scheduler каждые poke_interval секунд вызывает внутри этой задачи функцию, которая проверяет условие.
