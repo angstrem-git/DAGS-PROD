@@ -98,7 +98,7 @@ def check_new_batch(**context):
     """
 	result = run_query_text(query).strip()
     
-	#print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
+	print("(MikGrap) RAW RESULT:", result)   # <-- важно - Это сообщение выводится в логах выполнения DAG
 	log.info("Необработанный результат от ClickHouse: %s", result)
 
 	if not result:
