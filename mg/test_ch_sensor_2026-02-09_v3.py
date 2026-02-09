@@ -193,18 +193,21 @@ def check_batch(**context):
 
 
 def notify_failure(context):
-#	ti = context["task_instance"]
-#	error = context.get("exception")
-	send_email(
-		to=["M.Grapenyuk@angstrem.net"],
-		subject="mg_error",
-		html_content=f"""
-		<h3>MG: Task failed</h3>
-		""",
-#		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
-#		body=str(error),
-#		html_content=f"<pre>{error}</pre>",
-	)
+	try:
+	#	ti = context["task_instance"]
+	#	error = context.get("exception")
+		send_email(
+			to=["M.Grapenyuk@angstrem.net"],
+			subject="mg_error",
+			html_content=f"""
+			<h3>MG: Task failed</h3>
+			""",
+	#		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
+	#		body=str(error),
+	#		html_content=f"<pre>{error}</pre>",
+		)
+	except Exception as e:
+		print(f"Failed to send email: {e}")
 
 
 def insert_into_process_table(**context):
