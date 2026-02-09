@@ -192,7 +192,7 @@ def check_batch(**context):
 	ti.xcom_push(key="batch_id", value=batch_id)
 
 
-def notify_failure(context):
+def notify_failure(**context):
 	ti = context["task_instance"]
 	error = context.get("exception")
 	send_email(
