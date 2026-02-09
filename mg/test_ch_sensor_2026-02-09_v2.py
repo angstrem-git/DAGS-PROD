@@ -180,7 +180,7 @@ def insert_into_process_table(**context):
 	print("Обрабатываемый батч:", batch_id)
 
     # вставляем строку в таблицу
-	query = """
+	query = f"""
     	INSERT INTO test.sensor_processed_batches (batch_id, table_name)
     	VALUES ('{batch_id}', 'sensor_fact_table')
     """	
