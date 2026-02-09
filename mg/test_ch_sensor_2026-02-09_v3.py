@@ -75,8 +75,8 @@ def check_new_batch(**context):
 
 	# **context - в PythonOperator контекст — это словарь со всем, что Airflow знает о текущем запуске task (о TaskInstance)
 	# Проверка содержимого:
-	for k in sorted(context.keys()):
-		print(k)
+	for k,v in context.items():
+		print(k, v)
 		#log.info(k)
 
     # Проверяем, что появилась хотя бы одна запись (SELECT count() - в сенсоре всегда использовать count() - это золотое правило сенсоров, но нам нужен конкретный batch_id)
