@@ -14,7 +14,7 @@ from decimal import Decimal
 
 def run_query_text(sql: str):
 # Результат запроса - в формате текст. Если в запросе указать SELECT ... FORMAT TSV, то в виде (value11\tvalue12\tvalue13\nvalue21\tvalue22\tvalue23\n)
-    hook = HttpHook(
+	hook = HttpHook(
 		method="POST", 
 		http_conn_id="click_onpremise_http"
 	)
