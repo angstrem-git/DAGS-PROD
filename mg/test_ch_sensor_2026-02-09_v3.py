@@ -223,7 +223,7 @@ def notify_failure(context):
 		)
 	except Exception as e:
 		#print(f"Failed to send email: {e}")
-		log.error("Failed to send email: %s", e:)
+		log.error("Failed to send email: %s", e)
 
 
 def insert_into_process_table(**context):
