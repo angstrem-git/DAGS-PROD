@@ -32,12 +32,12 @@ def run_query_json(sql: str):
         method="POST",
         http_conn_id="click_onpremise_http",
     )
-    response = hook.run(
-        endpoint="/",
-        data=sql,
-        headers={"Content-Type": "text/plain"},
-    )
-    return response.json()
+	response = hook.run(
+		endpoint="/",
+		data=sql,
+		headers={"Content-Type": "text/plain"},
+	)
+	return response.json()
 	# Если response.text, то получишь строку, а не структуру.
 	# Если в запросе указать SELECT ... FORMAT JSON и return response.json(), то run_query_json вернет славарь.
 	#{
@@ -103,7 +103,7 @@ def check_new_batch(**context):
 
 def compare_checksums(batch_id: str) -> bool:
     # ---------- 1. ожидаемые контрольные суммы ----------
-    expected_sql = f"""
+	expected_sql = f"""
     SELECT
         check_type,
         check_value
@@ -113,18 +113,18 @@ def compare_checksums(batch_id: str) -> bool:
     FORMAT JSON
     """
 
-    expected_json = run_query_json(expected_sql)
+	expected_json = run_query_json(expected_sql)
 
-    if expected_json["rows"] == 0:
-        raise ValueError(f"No checksums found for batch_id={batch_id}")
+	if expected_json["rows"] == 0:
+		raise ValueError(f"No checksums found for batch_id={batch_id}")
 
-    expected = {
-        row["check_type"]: Decimal(str(row["check_value"]))
-        for row in expected_json["data"]
-    }
+	expected = {
+		row["check_type"]: Decimal(str(row["check_value"]))
+		for row in expected_json["data"]
+	}
 
     # ---------- 2. фактические значения ----------
-    actual_sql = f"""
+	actual_sql = f"""
     SELECT
         count()              AS row_count,
         sum(qty)             AS sum_qty,
@@ -134,26 +134,26 @@ def compare_checksums(batch_id: str) -> bool:
     FORMAT JSON
     """
 
-    actual_json = run_query_json(actual_sql)
-    actual_row = actual_json["data"][0]
+	actual_json = run_query_json(actual_sql)
+	actual_row = actual_json["data"][0]
 
-    actual = {
-        "row_count": Decimal(actual_row["row_count"]),
-        "sum_qty": Decimal(actual_row["sum_qty"]),
-        "distinct_orders": Decimal(actual_row["distinct_orders"]),
-    }
+	actual = {
+		"row_count": Decimal(actual_row["row_count"]),
+		"sum_qty": Decimal(actual_row["sum_qty"]),
+		"distinct_orders": Decimal(actual_row["distinct_orders"]),
+	}
 
     # ---------- 3. сравнение ----------
-    for check_type, expected_value in expected.items():
-        if check_type not in actual:
-            raise ValueError(f"Unknown check_type: {check_type}")
+	for check_type, expected_value in expected.items():
+		if check_type not in actual:
+			raise ValueError(f"Unknown check_type: {check_type}")
 
-        actual_value = actual[check_type]
-
-        if actual_value != expected_value:
-            return False
-
-    return True
+		actual_value = actual[check_type]
+	
+		if actual_value != expected_value:
+			return False
+	
+	return True
 
 def insert_into_process_table(**context):
 	
@@ -224,8 +224,8 @@ def test_sensor_2026_02_05():
 		# ti — это TaskInstance. «Дай мне экземпляр текущей задачи, которая прямо сейчас выполняется».
 		ti = context["ti"]
 
-	    batch_id = ti.xcom_pull(
-		    task_ids="wait_for_new_batch",
+		batch_id = ti.xcom_pull(
+			task_ids="wait_for_new_batch",
 			key="batch_id"
 		)
 
