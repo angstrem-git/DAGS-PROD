@@ -8,6 +8,7 @@ from airflow.decorators import dag, task
 from airflow.providers.http.hooks.http import HttpHook
 from airflow.providers.ssh.operators.ssh import SSHOperator
 from airflow.hooks.base import BaseHook
+from airflow.utils.email import send_email
 from datetime import datetime
 from decimal import Decimal
 
@@ -167,6 +168,40 @@ def compare_checksums(batch_id: str) -> bool:
 	
 	return True
 
+def check_batch(**context):
+
+	# ti — это TaskInstance. «Дай мне экземпляр текущей задачи, которая прямо сейчас выполняется».
+	ti = context["ti"]
+
+	batch_id = ti.xcom_pull(
+		task_ids="wait_for_new_batch",
+		key="batch_id"
+	)
+
+	if not batch_id:
+		raise ValueError("batch_id не найден в XCom")
+
+	if not compare_checksums(batch_id):
+		raise ValueError(f"Несоответствие контрольных сумм для батча {batch_id}")
+	# raise ValueError(...) - немедленно прерывает выполнение функции, никакой return дальше не выполняется, исключение «вылетает наружу» в Airflow
+
+	print(f"Контрольные суммы в порядке для батча {batch_id}")
+
+	# (опционально) пробросим дальше
+	ti.xcom_push(key="batch_id", value=batch_id)
+
+
+def notify_failure(context):
+	ti = context["task_instance"]
+	error = context.get("exception")
+	send_email(
+		to=["M.Grapenyuk@angstrem.net"],
+		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
+		body=str(error),
+		html_content=f"<pre>{error}</pre>",
+	)
+
+
 def insert_into_process_table(**context):
 	
 	# ti — это TaskInstance. «Дай мне экземпляр текущей задачи, которая прямо сейчас выполняется».
@@ -193,16 +228,16 @@ def run_remote_etl():
 	ch = BaseHook.get_connection("click_onpremise_http_etl")
 
 	env = f"""
-    export CLICKHOUSE_URL="http://{ch.host}:{ch.port}"
-    export CLICKHOUSE_USER="{ch.login}"
-    export CLICKHOUSE_PASSWORD="{ch.password}"
-    export CLICKHOUSE_DATABASE="{ch.extra_dejson.get('database', 'test')}"
+		export CLICKHOUSE_URL="http://{ch.host}:{ch.port}"
+		export CLICKHOUSE_USER="{ch.login}"
+		export CLICKHOUSE_PASSWORD="{ch.password}"
+		export CLICKHOUSE_DATABASE="{ch.extra_dejson.get('database', 'test')}"
     """
 
 	return f"""
-    set -e
-    {env}
-    python3 /home/airflowetl/MG/test_etl/test_my_clickhouse_job.py
+		set -e
+		{env}
+		python3 /home/airflowetl/MG/test_etl/test_my_clickhouse_job.py
     """
 
 
@@ -216,6 +251,7 @@ def run_remote_etl():
 )
 def test_sensor_2026_02_05():
 
+	# 1.--------------------------------------------------------------------------------------
     # ---------- SENSOR ----------
 	@task.sensor(
 		poke_interval=30,		# Как часто спрашиваем = через каждые 30 секунд
@@ -229,47 +265,44 @@ def test_sensor_2026_02_05():
 		return check_new_batch(**context)	# Scheduler вызывает check_new_batch() каждый poke_interval, пока timeout не истечёт
 					# check_data_exists(): Должна быть быстрой, потому что вызывается каждые poke_interval секунд. Возвращает только True/False.
 
-	# TaskFlow API
-	@task
-	def check_batch(**context):
 
-		# ti — это TaskInstance. «Дай мне экземпляр текущей задачи, которая прямо сейчас выполняется».
-		ti = context["ti"]
+	# 2.--------------------------------------------------------------------------------------	
+	check_task = PythonOperator(
+		task_id="check_batch_id",
+		python_callable=check_batch,
+		on_failure_callback=notify_failure
+	)
+	# Airflow делает по сути вот это (упрощённо):
+	# try:
+	# 	check_batch(**context)
+	# 	task_state = SUCCESS
+	# except Exception as e:
+	# 	task_state = FAILED
+	# 	notify_failure(**context)
 
-		batch_id = ti.xcom_pull(
-			task_ids="wait_for_new_batch",
-			key="batch_id"
-		)
-
-		if not batch_id:
-			raise ValueError("batch_id не найден в XCom")
-
-		if not compare_checksums(batch_id):
-			raise ValueError(f"Несоответствие контрольных сумм для батча {batch_id}")
-
-		print(f"Контрольные суммы в порядке для батча {batch_id}")
-
-		# (опционально) пробросим дальше
-		ti.xcom_push(key="batch_id", value=batch_id)
+	# В случае raise ValueError(...) Airflow ловит exception, помечает task как FAILED, автоматически вызывает on_failure_callback, передаёт туда context
 
 
+	# 3.--------------------------------------------------------------------------------------
     # ---------- обычная task = PythonOperator ----------
+	########### @task # TaskFlow API
 	@task
 	def process_data(**context):
 		return insert_into_process_table(**context)
 
 
+	# 4.--------------------------------------------------------------------------------------
 	command_x = run_remote_etl()
 
 	ssh_run_etl = SSHOperator(
-		task_id="ssh_run_etl",
+		task_id="ssh_run_etl_id",
 		ssh_conn_id="airflowetl_ssh",
 		command=command_x,
 	)
 
 
     # зависимости
-	wait_for_new_batch() >> check_batch() >> process_data() >> ssh_run_etl
+	wait_for_new_batch() >> check_task >> process_data() >> ssh_run_etl
 
     # wait_for_new_batch() - не выполняет код, а создаёт SensorOperator в DAG, она становится Task объектом DAG.
     # wait_for_new_data() — это Sensor Task. Airflow не выполняет её сразу. Scheduler каждые poke_interval секунд вызывает внутри этой задачи функцию, которая проверяет условие.
