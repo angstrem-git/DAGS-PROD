@@ -7,6 +7,7 @@
 from airflow.decorators import dag, task
 from airflow.providers.http.hooks.http import HttpHook
 from airflow.providers.ssh.operators.ssh import SSHOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from airflow.hooks.base import BaseHook
 from airflow.utils.email import send_email
 from datetime import datetime
