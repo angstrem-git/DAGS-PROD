@@ -197,7 +197,10 @@ def notify_failure(context):
 #	error = context.get("exception")
 	send_email(
 		to=["M.Grapenyuk@angstrem.net"],
-		subject="mg_error"
+		subject="mg_error",
+		html_content=f"""
+		<h3>MG: Task failed</h3>
+		""",
 #		subject=f"Batch {ti.xcom_pull('batch_id')} FAILED",
 #		body=str(error),
 #		html_content=f"<pre>{error}</pre>",
