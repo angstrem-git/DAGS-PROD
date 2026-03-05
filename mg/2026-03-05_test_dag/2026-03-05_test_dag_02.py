@@ -96,8 +96,8 @@ with DAG(
 		clickhouse_conn_id="click_onpremise_airflow",
 		sql="sql/2026-03-05_test_insert_test2.sql",				# Относительный путь относительно файла DAG-а
 		params={
-			"db1": "{{ var.value.DB1 }}",					# = DB1 = Variable.get("DB1")
-			"db2": "{{ var.value.DB2 }}",					# = DB2 = Variable.get("DB2")
+			"db1": DB1,					# = DB1 = Variable.get("DB1")
+			"db2": DB2,					# = DB2 = Variable.get("DB2")
 			"batch_id_dttm": "{{ ti.xcom_pull(task_ids='wait_for_batch', key='batch_id_dttm') }}"
 		}
 	)
@@ -107,9 +107,9 @@ with DAG(
 		clickhouse_conn_id="click_onpremise_airflow",
 		sql="sql/2026-03-05_test_insert_test3.sql",				# Относительный путь относительно файла DAG-а
         params={
-			"db1": "{{ var.value.DB1 }}",					# = DB1 = Variable.get("DB1")
-			"db2": "{{ var.value.DB2 }}",					# = DB2 = Variable.get("DB2")
-			"db3": "{{ var.value.DB3 }}",					# = DB3 = Variable.get("DB3")
+			"db1": DB1,					# = DB1 = Variable.get("DB1")
+			"db2": DB2,					# = DB2 = Variable.get("DB2")
+			"db3": DB3,					# = DB3 = Variable.get("DB3")
 			"batch_id_dttm": "{{ ti.xcom_pull(task_ids='wait_for_batch', key='batch_id_dttm') }}"
 		}
 	)
