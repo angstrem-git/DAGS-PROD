@@ -1,6 +1,4 @@
-﻿TRUNCATE TABLE {{ params.db3 }}.test3;
-
-INSERT INTO {{ params.db3 }}.test3
+﻿INSERT INTO {{ params.db3 }}.test3
 SELECT
     t1.batch_id_dttm,
     now64(3),

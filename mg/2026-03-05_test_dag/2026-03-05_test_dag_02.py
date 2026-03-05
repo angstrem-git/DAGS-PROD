@@ -101,7 +101,14 @@ with DAG(
 		}
 	)
 
-	task3 = ClickHouseOperator(
+	task3  = ClickHouseOperator(
+    		task_id="truncate_test3",
+    		clickhouse_conn_id="click_onpremise_airflow",
+    		sql="TRUNCATE TABLE {{ params.db3 }}.test3",
+    		params={"db3": DB3}
+	)
+
+	task4 = ClickHouseOperator(
 		task_id="insert_test3",
 		clickhouse_conn_id="click_onpremise_airflow",
 		sql="sql/2026-03-05_test_insert_test3.sql",				# Относительный путь относительно файла DAG-а
@@ -112,4 +119,4 @@ with DAG(
 		}
 	)
 
-	sensor >> task1 >> task2 >> task3
+	sensor >> task1 >> task2 >> task3 >> task4 
