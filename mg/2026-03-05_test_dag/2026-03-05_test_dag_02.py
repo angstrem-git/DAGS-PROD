@@ -9,6 +9,7 @@ from pendulum import datetime													# Лучше from pendulum, чем fro
 import urllib.parse
 import requests
 from requests.auth import HTTPBasicAuth
+from pathlib import Path
 
 DB1 = Variable.get("DB1")
 DB2 = Variable.get("DB2")
@@ -19,10 +20,12 @@ URL = f"http://{ch.host}:{ch.port}"
 USER = ch.login
 PASSWORD = ch.password
 
+DAG_DIR = Path(__file__).parent 
 
 def wait_for_batch(**context):
 
-	with open("sql/2026-03-05_test_find_batch.sql") as f:
+	sql_path = DAG_DIR / "sql/2026-03-05_test_find_batch.sql"
+	with open(sql_path, encoding="utf-8") as f:
 		sql = f.read()
 	query_text = sql.format(p_db1=DB1, p_db2=DB2)
 
@@ -91,7 +94,7 @@ with DAG(
 	task2 = ClickHouseOperator(
 		task_id="insert_test2",
 		clickhouse_conn_id="click_onpremise_airflow",
-		sql="sql/2026-03-05_test_insert_test2.sql",
+		sql=str(DAG_DIR / "sql/2026-03-05_test_insert_test2.sql"),
 		params={
 			"db1": "{{ var.value.DB1 }}",					# = DB1 = Variable.get("DB1")
 			"db2": "{{ var.value.DB2 }}",					# = DB2 = Variable.get("DB2")
@@ -102,7 +105,7 @@ with DAG(
 	task3 = ClickHouseOperator(
 		task_id="insert_test3",
 		clickhouse_conn_id="click_onpremise_airflow",
-		sql="sql/2026-03-05_test_insert_test3.sql",
+		sql=str(DAG_DIR / "sql/2026-03-05_test_insert_test3.sql"),
         params={
 			"db1": "{{ var.value.DB1 }}",					# = DB1 = Variable.get("DB1")
 			"db2": "{{ var.value.DB2 }}",					# = DB2 = Variable.get("DB2")
