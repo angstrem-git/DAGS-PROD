@@ -1,6 +1,6 @@
 ﻿from airflow.sdk import DAG														# Для Airflow v3
 from airflow.sdk import Variable												# Для Airflow v3
-from airflow.sdk import BaseHook												# Для Airflow v3
+from airflow.hooks.base import BaseHook												
 from airflow.providers.standard.sensors.python import PythonSensor				# Для Airflow v3
 from airflow.providers.standard.operators.python import PythonOperator			# Для Airflow v3
 from airflow.providers.ssh.operators.ssh import SSHOperator						# Для Airflow v3
