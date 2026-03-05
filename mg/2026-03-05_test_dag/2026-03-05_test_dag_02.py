@@ -97,8 +97,7 @@ with DAG(
 		sql="sql/2026-03-05_test_insert_test2.sql",				# Относительный путь относительно файла DAG-а
 		params={
 			"db1": DB1,					# = DB1 = Variable.get("DB1")
-			"db2": DB2,					# = DB2 = Variable.get("DB2")
-			"batch_id_dttm": "{{ ti.xcom_pull(task_ids='wait_for_batch', key='batch_id_dttm') }}"
+			"db2": DB2					# = DB2 = Variable.get("DB2")
 		}
 	)
 
@@ -109,8 +108,7 @@ with DAG(
         params={
 			"db1": DB1,					# = DB1 = Variable.get("DB1")
 			"db2": DB2,					# = DB2 = Variable.get("DB2")
-			"db3": DB3,					# = DB3 = Variable.get("DB3")
-			"batch_id_dttm": "{{ ti.xcom_pull(task_ids='wait_for_batch', key='batch_id_dttm') }}"
+			"db3": DB3					# = DB3 = Variable.get("DB3")
 		}
 	)
 

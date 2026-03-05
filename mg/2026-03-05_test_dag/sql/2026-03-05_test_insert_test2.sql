@@ -4,4 +4,4 @@ SELECT
     now64(3),
     col_a * 2
 FROM {{ params.db1 }}.test1
-WHERE batch_id_dttm = '{{ params.batch_id_dttm }}'
+WHERE batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
