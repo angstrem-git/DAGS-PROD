@@ -94,7 +94,7 @@ with DAG(
 	task2 = ClickHouseOperator(
 		task_id="insert_test2",
 		clickhouse_conn_id="click_onpremise_airflow",
-		sql=str(DAG_DIR / "sql/2026-03-05_test_insert_test2.sql"),
+		sql="sql/2026-03-05_test_insert_test2.sql",				# Относительный путь относительно файла DAG-а
 		params={
 			"db1": "{{ var.value.DB1 }}",					# = DB1 = Variable.get("DB1")
 			"db2": "{{ var.value.DB2 }}",					# = DB2 = Variable.get("DB2")
@@ -105,7 +105,7 @@ with DAG(
 	task3 = ClickHouseOperator(
 		task_id="insert_test3",
 		clickhouse_conn_id="click_onpremise_airflow",
-		sql=str(DAG_DIR / "sql/2026-03-05_test_insert_test3.sql"),
+		sql="sql/2026-03-05_test_insert_test3.sql",				# Относительный путь относительно файла DAG-а
         params={
 			"db1": "{{ var.value.DB1 }}",					# = DB1 = Variable.get("DB1")
 			"db2": "{{ var.value.DB2 }}",					# = DB2 = Variable.get("DB2")
