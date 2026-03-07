@@ -60,8 +60,8 @@ DAG_DIR = Path(__file__).parent  # Путь к текущей папке DAG
 #		key="batch_id_dttm",
 #		value=batch_id_dttm
 #	)
-
-	return True
+#
+#	return True
 
 
 with DAG(
