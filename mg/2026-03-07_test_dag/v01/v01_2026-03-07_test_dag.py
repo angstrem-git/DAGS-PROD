@@ -75,7 +75,7 @@ with DAG(
 		task_id="wait_for_batch",
 		poke_interval=5,
 		timeout=60,
-		python_callable=wait_for_batch
+		python_callable=wait_for_batch,
 		op_kwargs={
 			"DAG_DIR_key": DAG_DIR,
 			"DB1_key": DB1,
