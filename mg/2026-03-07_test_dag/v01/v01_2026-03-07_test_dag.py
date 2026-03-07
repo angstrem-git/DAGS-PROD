@@ -77,6 +77,7 @@ with DAG(
 		timeout=60,
 		python_callable=wait_for_batch,
 		op_kwargs={
+			"RELEASE_key": RELEASE,
 			"DAG_DIR_key": DAG_DIR,
 			"DB1_key": DB1,
 			"DB2_key": DB2,
