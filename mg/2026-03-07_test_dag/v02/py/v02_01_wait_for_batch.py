@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 
 def wait_for_batch(RELEASE_key, DAG_DIR_key, DB1_key, DB2_key, URL_key, USER_key, PASSWORD_key, **context):
 
-	sql_path = DAG_DIR_key / "sql/{RELEASE_key}_01_2026-03-07_test_find_batch.sql"
+	sql_path = DAG_DIR_key / f"sql/{RELEASE_key}_01_2026-03-07_test_find_batch.sql"
 	with open(sql_path, encoding="utf-8") as f:
 		sql = f.read()
 	query_text = sql.format(p_db1=DB1_key, p_db2=DB2_key)
