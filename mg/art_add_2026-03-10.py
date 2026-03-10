@@ -76,10 +76,10 @@ with DAG(
     	sql='sql/ms_art_add_t10_price_snapshot_update.sql'
     )
 
-	t11 = ClickHouseOperator(
-		task_id='ch_art_insert_rasp2_art',
-		clickhouse_conn_id='click_onpremise_airflow',
-		sql='sql/ch_art_insert_rasp2_art.sql'			
-	)
+    t11 = ClickHouseOperator(
+        task_id='ch_art_insert_rasp2_art',
+        clickhouse_conn_id='click_onpremise_airflow',
+        sql='sql/ch_art_insert_rasp2_art.sql'			
+    )
 
 t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10 >> t11 
