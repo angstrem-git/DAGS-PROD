@@ -49,4 +49,4 @@ with DAG(
 		sql='sql/t06_insert_rasp2_unit_sale.sql'			
 	)
 
-t01 >> t02 >> t03 >> t04 >> t04 >> t06 
+t01 >> t02 >> t03 >> t04 >> t05 >> t06 
