@@ -3,6 +3,7 @@ from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.standard.operators.python import PythonOperator
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator	# Внешний сервис
+import pendulum
 from pendulum import datetime
 
 local_tz = pendulum.timezone("Europe/Moscow")
