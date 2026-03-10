@@ -12,7 +12,7 @@ with DAG(
     dag_id="art_add_2026-03-10",
     description="Заполнение таблицы [mg2].[art] новыми номенклатурами",
     schedule="30 3 * * *",  # 03:30 MSK
-    start_date=pendulum.datetime(2025, 8, 1, tz=local_tz),
+    start_date=pendulum.datetime(2026, 3, 10, tz=local_tz),
 	catchup=False,
     tags=['mg'],
 ) as dag:
