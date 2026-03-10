@@ -1,0 +1,22 @@
+﻿INSERT INTO rasp2.open_orders_rn_today
+(
+	order_id,
+    order_doc_date,
+    order_doc_num,
+    order_guid_uuid,
+    order_guid_str,
+    unit_name,
+    order_count,
+    total_sum
+)
+SELECT
+	toInt64(order_id),
+	order_doc_date,
+	order_doc_num,
+	toUUID(order_guid_str),
+	order_guid_str,
+	unit_name,
+	order_count,
+	total_sum
+FROM 
+	from_mssql.vw_open_orders_rn_today

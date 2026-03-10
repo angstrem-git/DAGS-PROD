@@ -1,0 +1,1 @@
+﻿TRUNCATE TABLE rasp2.unit_sale

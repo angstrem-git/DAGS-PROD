@@ -1,0 +1,42 @@
+﻿INSERT INTO rasp2.unit_sale
+(
+	top_level_directorate_name 
+    ,directorate_name 
+    ,division_name 
+    ,trade_network_name 
+    ,group_of_territories_name 
+    ,unit_id 
+    ,unit_name 
+    ,unit_guid_str 
+    ,unit_guid_uid
+    ,city_id 
+    ,city_name 
+    ,city_guid_str 
+    ,city_guid_uid
+    ,sales_direction_id 
+    ,sales_direction_name 
+    ,salon_type_id 
+    ,salon_type_name 
+    ,copy_unit_name_without_spaces 
+)
+SELECT 
+	top_level_directorate_name 
+    ,directorate_name
+    ,division_name 
+    ,trade_network_name 
+    ,group_of_territories_name 
+    ,toInt64(unit_id) 
+    ,unit_name 
+    ,unit_guid_str 
+    ,toUUID(unit_guid_str)
+    ,toInt64(city_id) 
+    ,city_name 
+    ,city_guid_str 
+    ,toUUID(city_guid_str)
+    ,toUInt8(sales_direction_id)
+    ,sales_direction_name 
+    ,toUInt8(salon_type_id) 
+    ,salon_type_name 
+    ,copy_unit_name_without_spaces 
+FROM
+	from_mssql.vw_unit_sale

@@ -1,0 +1,1 @@
+﻿TRUNCATE TABLE rasp2.open_orders_rn_today

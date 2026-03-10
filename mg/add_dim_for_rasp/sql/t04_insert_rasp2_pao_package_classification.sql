@@ -1,0 +1,46 @@
+﻿INSERT INTO rasp2.pao_package_classification
+(
+	art_id ,
+    nomenclature_id ,
+    nomenclature_name ,
+    nomenclature_property_id ,
+    nomenclature_property_name ,
+    nomenclature_brand_id ,
+    nomenclature_brand_name ,
+    nomenclature_group_id ,
+    nomenclature_group_name ,
+    nomenclature_collection_id ,
+    nomenclature_collection_name ,
+    pao_color_id ,
+    pao_color_name ,
+    unit_id ,
+    unit_name ,
+    unit_short_name ,
+    unit_sort ,
+    unit_combo_name ,
+    pao_parent_category_name ,
+    pao_category_name 
+)
+SELECT
+	toInt64(art_id) ,
+    toInt64(nomenclature_id) ,
+    nomenclature_name ,
+    toInt64(nomenclature_property_id) ,
+    nomenclature_property_name ,
+    nomenclature_brand_id ,
+    nomenclature_brand_name ,
+    nomenclature_group_id ,
+    nomenclature_group_name ,
+    nomenclature_collection_id ,
+    nomenclature_collection_name ,
+    pao_color_id ,
+    pao_color_name ,
+    unit_id ,
+    unit_name ,
+    unit_short_name ,
+    unit_sort ,
+    unit_combo_name ,
+    pao_parent_category_name ,
+    pao_category_name
+FROM 
+	from_mssql.vw_pao_package_classification
