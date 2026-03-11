@@ -8,7 +8,7 @@ def wait_for_batch(RELEASE_key, DAG_DIR_key, DB1_key, DB3_key, URL_key, USER_key
 	sql_path = DAG_DIR_key / f"sql/{RELEASE_key}_t01_find_batch.sql"
 	with open(sql_path, encoding="utf-8") as f:
 		sql = f.read()
-	query_text = sql.format(p_db1=DB1_key, p_db2=DB3_key)
+	query_text = sql.format(p_db1=DB1_key, p_db3=DB3_key)
 
 	query_encoded = urllib.parse.quote(query_text)
 	full_url = f"{URL_key}/?database={DB1_key}&query={query_encoded}"
