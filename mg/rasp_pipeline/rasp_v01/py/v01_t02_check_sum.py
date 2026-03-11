@@ -32,9 +32,9 @@ def check_sum(RELEASE_key, DAG_DIR_key, DB1_key, URL_key, USER_key, PASSWORD_key
 	
 	logging.info(f"batch_id_dttm={batch_id_dttm}, diff_count={d}")
 	if d != 0:
-        raise AirflowException(
+		raise AirflowException(
 			f"MG: Не пройдена проверка контрольных значений. batch_id_dttm={batch_id_dttm}, Количество непройденных={d}"
 		)
 	 # Падение с исключением. Airflow пометит task как FAILED, остановит downstream задачи, покажет понятную ошибку в логах.
-
-    return True
+	 
+	 return True

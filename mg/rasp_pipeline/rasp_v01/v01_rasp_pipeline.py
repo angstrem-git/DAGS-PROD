@@ -4,9 +4,13 @@ RELEASE = "v01"
 # Используем f-string для динамического формирования пути
 from importlib import import_module
 # Динамически импортируем функцию из файла, где имя папки зависит от RELEASE
-module = import_module(f"mg.2026-03-07_test_dag.{RELEASE}.py.{RELEASE}_01_wait_for_batch")
+module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t01_wait_for_batch")
 wait_for_batch = getattr(module, "wait_for_batch")
-#from v01.py.v01_01_wait_for_batch import wait_for_batch  # импортируем функцию wait_for_batch из отдельного файла 01_wait_for_batch
+#from rasp_v01.py.v01_t01_wait_for_batch import wait_for_batch  # импортируем функцию wait_for_batch из отдельного файла v01_t01_wait_for_batch
+module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t02_check_sum")
+wait_for_batch = getattr(module, "check_sum")
+#from rasp_v01.py.v01_t02_check_sum import check_sum  # импортируем функцию check_sum из отдельного файла v01_t02_check_sum
+
 
 from airflow.sdk import DAG														# Для Airflow v3
 from airflow.sdk import Variable												# Для Airflow v3
