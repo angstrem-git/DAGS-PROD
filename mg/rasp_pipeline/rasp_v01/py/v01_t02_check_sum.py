@@ -31,7 +31,10 @@ def check_sum(RELEASE_key, DAG_DIR_key, DB1_key, URL_key, USER_key, PASSWORD_key
         timeout=60,
     )
 
-    r.raise_for_status()
+    #r.raise_for_status()
+    if r.status_code != 200:
+        print(r.text)
+        raise Exception(r.text)
 
     d = r.json()["data"][0]["total_check"]
 

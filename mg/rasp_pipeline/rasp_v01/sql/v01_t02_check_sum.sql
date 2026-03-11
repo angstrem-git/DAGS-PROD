@@ -83,7 +83,7 @@
 			FROM 
 				{p_db1}.packet_check_sum
 			WHERE
-				schema_name = {p_db1}
+				schema_name = '{p_db1}'
 				AND table_id = 6
 				AND batch_id_dttm = '{p_batch_id_dttm}'		
 		) AS ev	
