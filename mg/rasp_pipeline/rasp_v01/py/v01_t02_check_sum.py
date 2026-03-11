@@ -13,7 +13,7 @@ def check_sum(RELEASE_key, DAG_DIR_key, DB1_key, URL_key, USER_key, PASSWORD_key
     )
 
     sql_path = DAG_DIR_key / f"sql/{RELEASE_key}_t02_check_sum.sql"
-    with open(sql_path, encoding="utf-8") as f:
+    with open(sql_path, encoding="utf-8-sig") as f:
         sql = f.read()
 
     query_text = sql.format(
