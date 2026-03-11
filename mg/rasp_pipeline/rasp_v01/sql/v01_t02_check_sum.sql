@@ -15,7 +15,7 @@
 			FROM 
 				{p_db1}.packet 
 			WHERE 
-				batch_id_dttm = {p_batch_id_dttm}		
+				batch_id_dttm = '{p_batch_id_dttm}'		
 			UNION ALL	
 			SELECT 
 				2	
@@ -26,7 +26,7 @@
 			FROM 
 				{p_db1}.packet 
 			WHERE 
-				batch_id_dttm = {p_batch_id_dttm}			
+				batch_id_dttm = '{p_batch_id_dttm}'				
 			UNION ALL		
 			SELECT 
 				3
@@ -34,7 +34,7 @@
 			FROM 
 				{p_db1}.packet 
 			WHERE 
-				batch_id_dttm = {p_batch_id_dttm}		
+				batch_id_dttm = '{p_batch_id_dttm}'			
 			UNION ALL		
 			SELECT 
 				4
@@ -42,7 +42,7 @@
 			FROM 
 				{p_db1}.packet 
 			WHERE 
-				batch_id_dttm = {p_batch_id_dttm}	
+				batch_id_dttm = '{p_batch_id_dttm}'		
 			UNION ALL		
 			SELECT 
 				5
@@ -50,7 +50,7 @@
 			FROM 
 				{p_db1}.packet 
 			WHERE 
-				batch_id_dttm = {p_batch_id_dttm}		
+				batch_id_dttm = '{p_batch_id_dttm}'			
 			UNION ALL	
 			SELECT 
 				6
@@ -61,7 +61,7 @@
 			FROM 
 				{p_db1}.packet 
 			WHERE 
-				batch_id_dttm = {p_batch_id_dttm}		
+				batch_id_dttm = '{p_batch_id_dttm}'		
 			UNION ALL		
 			SELECT 
 				7
@@ -72,7 +72,7 @@
 			FROM 
 				{p_db1}.packet 
 			WHERE 
-				batch_id_dttm = {p_batch_id_dttm}	
+				batch_id_dttm = '{p_batch_id_dttm}'		
 		) AS av	
 	INNER JOIN 	
 		(
@@ -85,7 +85,7 @@
 			WHERE
 				schema_name = {p_db1}
 				AND table_id = 6
-				AND batch_id_dttm = {p_batch_id_dttm}		
+				AND batch_id_dttm = '{p_batch_id_dttm}'		
 		) AS ev	
 	ON av.aggregate_function_id = ev.aggregate_function_id
 )
