@@ -1,1 +1,0 @@
-﻿TRUNCATE TABLE {{ params.db3 }}.test3
