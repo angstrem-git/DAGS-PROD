@@ -7,6 +7,10 @@
 	orders_count,
 	sum_rank,
 	sum_rank_per_packet,
+	orders_count_rank,
+	sum_rank_only_this_set,
+	sum_rank_per_packet_only_this_set,
+	orders_count_only_for_best,
 	packet_array,
 	plan_concat_array
 )
@@ -34,6 +38,10 @@ pr AS
 		,hp.packet_property_name
 		,hp.sum_rank
 		,hp.sum_rank_per_packet
+		,hp.orders_count_rank
+		,hp.sum_rank_only_this_set
+		,hp.sum_rank_per_packet_only_this_set
+		,hp.orders_count_only_for_best
 		,count(hp.rank_id)			AS plan_count
 		,arrayStringConcat(				-- Склеивает массив в текст с переносом строки между элементами (',\n')
 			groupArray(
@@ -55,6 +63,10 @@ pr AS
 					,packet_property_name
 					,sum_rank
 					,sum_rank_per_packet
+					,orders_count_rank
+					,sum_rank_only_this_set
+					,sum_rank_per_packet_only_this_set
+					,orders_count_only_for_best
 				FROM
 					{{ params.db3 }}.fct_deficit_packet_rank 
 				WHERE 
@@ -70,6 +82,10 @@ pr AS
 		,hp.packet_property_name
 		,hp.sum_rank
 		,hp.sum_rank_per_packet
+		,orders_count_rank
+		,sum_rank_only_this_set
+		,sum_rank_per_packet_only_this_set
+		,orders_count_only_for_best
 )
 ,
 pa AS
@@ -81,6 +97,10 @@ pa AS
     	rank_id,
     	sum_rank,
     	sum_rank_per_packet,
+		orders_count_rank,
+		sum_rank_only_this_set,
+		sum_rank_per_packet_only_this_set,
+		orders_count_only_for_best,
     	arrayStringConcat(							-- 3.Из ОДИНОГО массива кортежей сделали два текстовых массива
        	 	arrayMap(x -> x.3, sorted_arr),
         	concat(',', char(10))
@@ -97,7 +117,11 @@ pa AS
    	 		date_id,
         	rank_id,
         	sum_rank,
-        	sum_rank_per_packet,     	
+        	sum_rank_per_packet, 
+			orders_count_rank,
+			sum_rank_only_this_set,
+			sum_rank_per_packet_only_this_set,
+			orders_count_only_for_best,
         	arraySort(     							-- 2.Отсортировали ОДИН массив кортежей  							
             	groupArray(							-- 1.Собрали ОДИН массив кортежей
                 	(
@@ -114,7 +138,11 @@ pa AS
     		date_id,
         	rank_id,
         	sum_rank,
-        	sum_rank_per_packet
+        	sum_rank_per_packet,
+			orders_count_rank,
+			sum_rank_only_this_set,
+			sum_rank_per_packet_only_this_set,
+			orders_count_only_for_best
 	)
 	ORDER BY
     	date_id,
@@ -124,6 +152,10 @@ pa AS
 --    	rank_id,
 --    	sum_rank,
 --    	sum_rank_per_packet,
+--		orders_count_rank,
+--		sum_rank_only_this_set,
+--		sum_rank_per_packet_only_this_set,
+--		orders_count_only_for_best,
 --    	arrayStringConcat(
 --        	arrayMap(x -> x.3, 
 --        		arraySort(
@@ -158,12 +190,20 @@ pa AS
 --    	rank_id,
 --    	sum_rank,
 --    	sum_rank_per_packet
+--		orders_count_rank,
+--		sum_rank_only_this_set,
+--		sum_rank_per_packet_only_this_set,
+--		orders_count_only_for_best,
 ----------------------------------------------------------------------------
 --	SELECT
 --    	date_id,
 --		rank_id,
 --		sum_rank,
 --		sum_rank_per_packet,
+--		orders_count_rank,
+--		sum_rank_only_this_set,
+--		sum_rank_per_packet_only_this_set,
+--		orders_count_only_for_best,
 --		--plan_count,
 --		--plan_concat,
 --		concat(
@@ -198,6 +238,10 @@ pa AS
 --		rank_id,
 --		sum_rank,
 --		sum_rank_per_packet
+--		orders_count_rank,
+--		sum_rank_only_this_set,
+--		sum_rank_per_packet_only_this_set,
+--		orders_count_only_for_best,
 --	--	plan_count,
 --	--	plan_concat
 --	ORDER BY 
@@ -218,18 +262,19 @@ rd AS
 	GROUP BY
 		date_id,
 		rank_id
-	ORDER BY 
-		date_id,
-		rank_id
 )
 SELECT
 	pa.batch_id_dttm,
     pa.batch_id_str,
 	pa.date_id,
 	pa.rank_id,
-	rd.orders_count,
+	coalesce(rd.orders_count, 0) AS orders_count,
 	pa.sum_rank,
 	pa.sum_rank_per_packet,
+	pa.orders_count_rank,
+	pa.sum_rank_only_this_set,
+	pa.sum_rank_per_packet_only_this_set,
+	pa.orders_count_only_for_best,
 	pa.packet_array,
 	pa.plan_concat_array	
 FROM 	

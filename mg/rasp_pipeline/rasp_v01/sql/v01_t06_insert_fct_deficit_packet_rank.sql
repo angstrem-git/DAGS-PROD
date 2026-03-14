@@ -10,7 +10,11 @@
 	packet_property_name,
 	packet_rank,
 	sum_rank,
-	sum_rank_per_packet
+	sum_rank_per_packet,
+	orders_count_rank,
+	sum_rank_only_this_set,
+	sum_rank_per_packet_only_this_set,
+	orders_count_only_for_best
 )
 SELECT 
 	hpp.batch_id_dttm
@@ -38,6 +42,10 @@ SELECT
     ) 
 	,hpp.sum_rank
 	,hpp.sum_rank_per_packet
+	,hpp.orders_count_rank
+	,hpp.sum_rank_only_this_set
+	,hpp.sum_rank_per_packet_only_this_set
+	,hpp.orders_count_only_for_best
 FROM  
 	rasp2.art AS art
 	ANY RIGHT JOIN 
@@ -47,7 +55,11 @@ FROM
 				rank_id,
 				total_packet_art_id,
 				sum_rank,
-				sum_rank_per_packet
+				sum_rank_per_packet,
+				orders_count_rank,
+				sum_rank_only_this_set,
+				sum_rank_per_packet_only_this_set,
+				orders_count_only_for_best
 			FROM
 				{{ params.db2 }}.deficit_packet_rank 
 			WHERE
