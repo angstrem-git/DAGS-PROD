@@ -16,6 +16,7 @@
 	,sort_rank
 	-- mg-16.03.2026 ---------------------------------------------------------------------------
 	,unit_otgruzki_guid_OPN_uid
+	,city_otgruzki_guid_OPN_uid																	
 	,ves_total
 	,obyom_total
 	,date_unit_otgruzki_id
@@ -37,13 +38,19 @@ SELECT
 	,def.sort_rank	
 	-- mg-16.03.2026 ---------------------------------------------------------------------------
 	,pkt.unit_otgruzki_guid_OPN_uid
+	,pkt.city_otgruzki_guid_OPN_uid																
 	,pkt.ves_total
 	,pkt.obyom_total
-	,cityHash64(def.date_id, pkt.unit_otgruzki_guid_OPN_uid) 
+	,cityHash64(def.date_id, pkt.unit_otgruzki_guid_OPN_uid, pkt.city_otgruzki_guid_OPN_uid) 	
 FROM
 	(
 		SELECT
 			unit_otgruzki_guid_OPN_uid						AS unit_otgruzki_guid_OPN_uid
+			,if(
+				unit_otgruzki_guid_OPN_uid = toUUID('016a1489-ef2e-11db-8f0b-000423d2fac4'),	-- Склад готовой продукции КомСл
+				toUUID('71a708ae-98b2-11e0-856e-000423d2fac4'),									-- г. Воронеж
+				city_otgruzki_guid_OPN_uid						
+			)												AS city_otgruzki_guid_OPN_uid		
 			,order_roznica_guid_str							AS order_roznica_guid_str
 			,SUM(kolichestvo_dolg * ves_brutto_na_shtuku) 	AS ves_total
 			,SUM(kolichestvo_dolg * obyom_brutto_na_shtuku) AS obyom_total
@@ -54,6 +61,7 @@ FROM
 			AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
 		GROUP BY
 			unit_otgruzki_guid_OPN_uid
+			,city_otgruzki_guid_OPN_uid														
 			,order_roznica_guid_str
 	) AS pkt
 	INNER JOIN
