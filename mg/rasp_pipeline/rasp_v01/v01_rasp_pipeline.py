@@ -82,7 +82,10 @@ with DAG(
     t03 = ClickHouseOperator(
         task_id="insert_fct_deficit_packet_order",
         clickhouse_conn_id="click_onpremise_airflow",
-        sql=f"sql/{RELEASE}_t03_insert_fct_deficit_packet_order.sql"			# Относительный путь относительно файла DAG-а
+        sql=f"sql/{RELEASE}_t03_insert_fct_deficit_packet_order.sql",			# Относительный путь относительно файла DAG-а
+        params={			
+            "db3": DB3									
+        }
     )
 
     t04 = SSHOperator(
@@ -125,7 +128,8 @@ with DAG(
         clickhouse_conn_id="click_onpremise_airflow",
         sql=f"sql/{RELEASE}_t06_insert_fct_deficit_packet_rank.sql",			# Относительный путь относительно файла DAG-а
         params={			
-            "db2": DB2									
+            "db2": DB2,					
+            "db3": DB3								
 	    }
     )
 
@@ -141,8 +145,20 @@ with DAG(
     t08 = ClickHouseOperator(
         task_id="insert_dim_packet_processed_batches",
         clickhouse_conn_id="click_onpremise_airflow",
-        sql=f"sql/{RELEASE}_t08_insert_dim_packet_processed_batches.sql"			# Относительный путь относительно файла DAG-а
+        sql=f"sql/{RELEASE}_t08_insert_dim_packet_processed_batches.sql",			# Относительный путь относительно файла DAG-а
+        params={			
+            "db3": DB3									
+        }
     )
 
-    t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08
+    t09 = ClickHouseOperator(
+        task_id="insert_fct_unit_zayavka_na_otgruzku",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t09_insert_fct_unit_zayavka_na_otgruzku.sql",			# Относительный путь относительно файла DAG-а
+        params={			
+            "db3": DB3									
+        }
+    )
+
+    t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09
 

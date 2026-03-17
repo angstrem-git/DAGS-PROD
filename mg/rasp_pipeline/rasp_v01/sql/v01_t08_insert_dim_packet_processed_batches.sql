@@ -1,4 +1,4 @@
-﻿INSERT INTO rasp3_v01.dim_packet_processed_batches
+﻿INSERT INTO {{ params.db3 }}.dim_packet_processed_batches
 (
 	batch_id_dttm,
 	batch_id_str,

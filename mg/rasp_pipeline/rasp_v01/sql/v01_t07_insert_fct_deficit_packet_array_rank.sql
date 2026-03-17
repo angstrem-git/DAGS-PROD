@@ -1,4 +1,4 @@
-﻿INSERT INTO rasp3_v01.fct_deficit_packet_array_rank
+﻿INSERT INTO {{ params.db3 }}.fct_deficit_packet_array_rank
 (
 	batch_id_dttm,
 	batch_id_str,
