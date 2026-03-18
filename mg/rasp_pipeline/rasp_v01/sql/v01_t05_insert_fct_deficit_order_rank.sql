@@ -16,7 +16,7 @@
 	,sort_rank
 	-- mg-16.03.2026 ---------------------------------------------------------------------------
 	,unit_otgruzki_guid_OPN_uid
-	,city_otgruzki_guid_OPN_uid																	
+	,city_otgruzki_guid_OPN_uid																	-- Добавить
 	,ves_total
 	,obyom_total
 	,date_unit_otgruzki_id
@@ -38,31 +38,48 @@ SELECT
 	,def.sort_rank	
 	-- mg-16.03.2026 ---------------------------------------------------------------------------
 	,pkt.unit_otgruzki_guid_OPN_uid
-	,pkt.city_otgruzki_guid_OPN_uid																
+	,pkt.city_otgruzki_guid_OPN_uid																-- Добавить
 	,pkt.ves_total
 	,pkt.obyom_total
-	,cityHash64(def.date_id, pkt.unit_otgruzki_guid_OPN_uid, pkt.city_otgruzki_guid_OPN_uid) 	
+	--,cityHash64(def.date_id, pkt.unit_otgruzki_guid_OPN_uid, pkt.city_otgruzki_guid_OPN_uid) 	-- Изменить
+	,hsh.date_unit_otgruzki_id
 FROM
 	(
 		SELECT
-			unit_otgruzki_guid_OPN_uid						AS unit_otgruzki_guid_OPN_uid
-			,if(
-				unit_otgruzki_guid_OPN_uid = toUUID('016a1489-ef2e-11db-8f0b-000423d2fac4'),	-- Склад готовой продукции КомСл
-				toUUID('71a708ae-98b2-11e0-856e-000423d2fac4'),									-- г. Воронеж
-				city_otgruzki_guid_OPN_uid						
-			)												AS city_otgruzki_guid_OPN_uid		
-			,order_roznica_guid_str							AS order_roznica_guid_str
-			,SUM(kolichestvo_dolg * ves_brutto_na_shtuku) 	AS ves_total
-			,SUM(kolichestvo_dolg * obyom_brutto_na_shtuku) AS obyom_total
+    		unit_otgruzki_guid_OPN_uid,
+    		city_otgruzki_guid_OPN_uid,
+    		order_roznica_guid_str,
+    		SUM(kolichestvo_dolg * ves_brutto_na_shtuku)  AS ves_total,
+    		SUM(kolichestvo_dolg * obyom_brutto_na_shtuku) AS obyom_total
 		FROM
-			rasp1.packet 
-		WHERE 
-			order_roznica_guid_str != ''
-			AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
+		(
+   		 SELECT
+        		unit_otgruzki_guid_OPN_uid,
+
+        		multiIf(
+            		unit_otgruzki_guid_OPN_uid = toUUID('016a1489-ef2e-11db-8f0b-000423d2fac4'),	-- Склад готовой продукции КомСл
+            		toUUID('71a708ae-98b2-11e0-856e-000423d2fac4'),									-- г. Воронеж
+
+            		unit_otgruzki_guid_OPN_uid = toUUID('df928c3a-ec8b-4051-9d9d-3c85d182bec5'),	-- Кострома Офис-Склад
+            		toUUID('b6192540-98b1-11e0-856e-000423d2fac4'),									-- г. Кострома
+
+            		city_otgruzki_guid_OPN_uid
+        		) AS city_otgruzki_guid_OPN_uid,
+
+        		order_roznica_guid_str,
+        		kolichestvo_dolg,
+        		ves_brutto_na_shtuku,
+        		obyom_brutto_na_shtuku
+
+    		FROM rasp1.packet
+    		WHERE 
+        		order_roznica_guid_str != ''
+        		AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
+		)
 		GROUP BY
-			unit_otgruzki_guid_OPN_uid
-			,city_otgruzki_guid_OPN_uid														
-			,order_roznica_guid_str
+    		unit_otgruzki_guid_OPN_uid,
+    		city_otgruzki_guid_OPN_uid,
+    		order_roznica_guid_str
 	) AS pkt
 	INNER JOIN
 	(
@@ -91,4 +108,29 @@ FROM
 	WHERE
 		drd.batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
 	) AS def
-	ON toUUID(pkt.order_roznica_guid_str) = def.order_roznica_guid_uid
+		ON toUUIDOrNull(pkt.order_roznica_guid_str) = def.order_roznica_guid_uid
+	LEFT JOIN 
+	(
+	SELECT
+    	unit_zayavka_na_otgruzku_guid_OPN_uid
+		,unit_zayavka_na_otgruzku_name
+		,city_zayavka_na_otgruzku_guid_OPN_uid
+    	,city_zayavka_na_otgruzku_name
+    	,argMin(date_unit_otgruzki_id, data_otgruzki_zayavka_na_otgruzku_date) AS date_unit_otgruzki_id
+	FROM 
+		{{ params.db3 }}.fct_unit_zayavka_na_otgruzku
+	WHERE 
+    	batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
+	GROUP BY 
+    	unit_zayavka_na_otgruzku_guid_OPN_uid
+		,unit_zayavka_na_otgruzku_name
+		,city_zayavka_na_otgruzku_guid_OPN_uid
+    	,city_zayavka_na_otgruzku_name
+	ORDER BY 
+		unit_zayavka_na_otgruzku_name
+		,city_zayavka_na_otgruzku_name
+	) AS hsh
+		ON pkt.unit_otgruzki_guid_OPN_uid = hsh.unit_zayavka_na_otgruzku_guid_OPN_uid
+		AND pkt.city_otgruzki_guid_OPN_uid = hsh.city_zayavka_na_otgruzku_guid_OPN_uid
+--ORDER BY def.unit_name
+--ORDER BY hsh.date_unit_otgruzki_id
