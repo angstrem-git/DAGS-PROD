@@ -11,100 +11,117 @@
 	,ves_itogo_zayavka_na_otgruzku 
 	,obyom_itogo_zayavka_na_otgruzku 
 	,date_unit_otgruzki_id 	
+	-- mg-20.03.2026 ------------------------------------------------------------------------------------
+	,truck_rejs_rn_sort_1
+	,truck_rejs_rn_name_1
+	,truck_rejs_rn_sort_2
+	,truck_rejs_rn_name_2
+	,truck_rejs_rn_sort_3
+	,truck_rejs_rn_name_3
+	-- mg-20.03.2026 ------------------------------------------------------------------------------------
 )
 WITH 
 unq AS
 	(
 	SELECT
 		DISTINCT
-		batch_id_dttm										AS batch_id_dttm
-		,batch_id_str										AS batch_id_str
-		,toDate(datetime_id) 								AS date_id
-		,unit_zayavka_na_otgruzku_guid_OPN_uid				AS unit_na_otgruzku_all_guid_OPN_uid
-		,unit_zayavka_na_otgruzku_name 						AS unit_na_otgruzku_all_name
-		,city_zayavka_na_otgruzku_guid_OPN_uid				AS city_na_otgruzku_all_guid_OPN_uid
-		,city_zayavka_na_otgruzku_name						AS city_na_otgruzku_all_name
+		pkt.batch_id_dttm										AS batch_id_dttm
+		,pkt.batch_id_str										AS batch_id_str
+		,toDate(pkt.datetime_id) 								AS date_id
+		,pkt.unit_zayavka_na_otgruzku_guid_OPN_uid				AS unit_na_otgruzku_all_guid_OPN_uid
+		,pkt.unit_zayavka_na_otgruzku_name 						AS unit_na_otgruzku_all_name
+		,pkt.city_zayavka_na_otgruzku_guid_OPN_uid				AS city_na_otgruzku_all_guid_OPN_uid
+		,pkt.city_zayavka_na_otgruzku_name						AS city_na_otgruzku_all_name
 	FROM 
-		rasp1.packet
+		rasp1.packet AS pkt
+		-- mg-20.03.2026 - Новый фильтр Розничных заказлв ---------------------------------------------------
+		INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn
+			ON pkt.unit_guid_OPN_uid = urn.unit_guid_uid
+		-- mg-20.03.2026 ------------------------------------------------------------------------------------
 	WHERE
-		unit_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
-		AND city_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
-		AND order_roznica_guid_str != ''
-		AND unit_zayavka_na_otgruzku_name NOT LIKE '%ФР%'
-		--	AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
-		AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
+		pkt.unit_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
+		AND pkt.city_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
+		--AND pkt.order_roznica_guid_str != ''						-- Фильтр = Розничный заказ (замена на INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn)
+		--AND pkt.unit_zayavka_na_otgruzku_name NOT LIKE '%ФР%'		-- Фильтр = Розничный заказ (замена на INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn)
+		AND pkt.batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
 				
 	UNION DISTINCT
 	
 	SELECT
 		DISTINCT
-		batch_id_dttm										
-		,batch_id_str										
-		,toDate(datetime_id)
-		,unit_otgruzki_guid_OPN_uid	
-		,unit_otgruzki_name
+		pkt.batch_id_dttm										
+		,pkt.batch_id_str										
+		,toDate(pkt.datetime_id)
+		,pkt.unit_otgruzki_guid_OPN_uid	
+		,pkt.unit_otgruzki_name
 		,if(
-			unit_otgruzki_guid_OPN_uid = toUUID('df928c3a-ec8b-4051-9d9d-3c85d182bec5'),	-- Кострома Офис-Склад
-        	toUUID('b6192540-98b1-11e0-856e-000423d2fac4'),									-- г. Кострома
-         	city_otgruzki_guid_OPN_uid
-		)						AS city_otgruzki_guid_OPN_uid
+			pkt.unit_otgruzki_guid_OPN_uid = toUUID('df928c3a-ec8b-4051-9d9d-3c85d182bec5'),	-- Кострома Офис-Склад
+        	toUUID('b6192540-98b1-11e0-856e-000423d2fac4'),										-- г. Кострома
+         	pkt.city_otgruzki_guid_OPN_uid
+		)								AS city_otgruzki_guid_OPN_uid
 		--,city_otgruzki_guid_OPN_uid
 		,if(
-			unit_otgruzki_guid_OPN_uid = toUUID('df928c3a-ec8b-4051-9d9d-3c85d182bec5'),	-- Кострома Офис-Склад
-        	'г. Кострома',																	-- г. Кострома
-        	city_otgruzki_name
-		)						AS city_otgruzki_name			
+			pkt.unit_otgruzki_guid_OPN_uid = toUUID('df928c3a-ec8b-4051-9d9d-3c85d182bec5'),	-- Кострома Офис-Склад
+        	'г. Кострома',																		-- г. Кострома
+        	pkt.city_otgruzki_name
+		)								AS city_otgruzki_name			
 		--,city_otgruzki_name					
 	FROM 
-		rasp1.packet
+		rasp1.packet AS pkt
+		-- mg-20.03.2026 - Новый фильтр Розничных заказлв ---------------------------------------------------
+		INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn
+			ON pkt.unit_guid_OPN_uid = urn.unit_guid_uid
+		-- mg-20.03.2026 ------------------------------------------------------------------------------------
 	WHERE
-		unit_otgruzki_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
-		AND order_roznica_guid_str != ''
-		AND unit_otgruzki_name NOT LIKE '%ФР%'
-		--	AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
-		AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
+		pkt.unit_otgruzki_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
+		--AND pkt.order_roznica_guid_str != ''				-- Фильтр = Розничный заказ (замена на INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn)
+		--AND pkt.unit_otgruzki_name NOT LIKE '%ФР%'		-- Фильтр = Розничный заказ (замена на INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn)
+		AND pkt.batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
 	--ORDER BY
-	--	unit_otgruzki_name
-	--	,city_otgruzki_name	
+	--	pkt.unit_otgruzki_name
+	--	,pkt.city_otgruzki_name	
 	)	
 ,
 rd AS
 	(
 	SELECT 
-		batch_id_dttm										AS batch_id_dttm
-		,batch_id_str										AS batch_id_str
-		,toDate(datetime_id) 								AS date_id
-		,unit_zayavka_na_otgruzku_guid_OPN_uid				AS unit_zayavka_na_otgruzku_guid_OPN_uid
-		,unit_zayavka_na_otgruzku_name						AS unit_zayavka_na_otgruzku_name
-		,city_zayavka_na_otgruzku_guid_OPN_uid				AS city_zayavka_na_otgruzku_guid_OPN_uid
-		,city_zayavka_na_otgruzku_name						AS city_zayavka_na_otgruzku_name
-		,toDate(data_otgruzki_zayavka_na_otgruzku_datetime)	AS data_otgruzki_zayavka_na_otgruzku_date
-		,doc_zayavka_na_otgruzku_rasp_guid_1C_uid			AS doc_zayavka_na_otgruzku_rasp_guid_1C_uid			-- 18.03.2026-Добавить
-		,MIN(ves_itogo_zayavka_na_otgruzku)					AS ves_itogo_zayavka_na_otgruzku
-		,MIN(obyom_itogo_zayavka_na_otgruzku)				AS obyom_itogo_zayavka_na_otgruzku
+		pkt.batch_id_dttm										AS batch_id_dttm
+		,pkt.batch_id_str										AS batch_id_str
+		,toDate(pkt.datetime_id) 								AS date_id
+		,pkt.unit_zayavka_na_otgruzku_guid_OPN_uid				AS unit_zayavka_na_otgruzku_guid_OPN_uid
+		,pkt.unit_zayavka_na_otgruzku_name						AS unit_zayavka_na_otgruzku_name
+		,pkt.city_zayavka_na_otgruzku_guid_OPN_uid				AS city_zayavka_na_otgruzku_guid_OPN_uid
+		,pkt.city_zayavka_na_otgruzku_name						AS city_zayavka_na_otgruzku_name
+		,toDate(pkt.data_otgruzki_zayavka_na_otgruzku_datetime)	AS data_otgruzki_zayavka_na_otgruzku_date
+		,pkt.doc_zayavka_na_otgruzku_rasp_guid_1C_uid			AS doc_zayavka_na_otgruzku_rasp_guid_1C_uid			
+		,MIN(pkt.ves_itogo_zayavka_na_otgruzku)					AS ves_itogo_zayavka_na_otgruzku
+		,MIN(pkt.obyom_itogo_zayavka_na_otgruzku)				AS obyom_itogo_zayavka_na_otgruzku
 	FROM	
-		rasp1.packet
+		rasp1.packet AS pkt
+		-- mg-20.03.2026 - Новый фильтр Розничных заказлв ---------------------------------------------------
+		--INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn		-- Включить, если не хотим, чтобы добавлялись рекламации!
+		--	ON pkt.unit_guid_OPN_uid = urn.unit_guid_uid
+		-- mg-20.03.2026 ------------------------------------------------------------------------------------
 	WHERE
-		unit_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
-		AND city_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
-		AND order_roznica_guid_str != ''
-		AND unit_zayavka_na_otgruzku_name NOT LIKE '%ФР%'											-- Не Франчайзи
-		--AND city_zayavka_na_otgruzku_guid_OPN_uid != '71a708ae-98b2-11e0-856e-000423d2fac4'			-- Не Воронеж
-		--AND city_zayavka_na_otgruzku_guid_OPN_uid != '71a708b4-98b2-11e0-856e-000423d2fac4'			-- Не Липецк
-		--	AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
-		AND batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
+		pkt.unit_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
+		AND pkt.city_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
+		--AND pkt.order_roznica_guid_str != ''						-- Фильтр = Розничный заказ (замена на INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn)
+		--AND pkt.unit_zayavka_na_otgruzku_name NOT LIKE '%ФР%'		-- Фильтр = Розничный заказ (замена на INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn)									-- Не Франчайзи
+		--AND pkt.city_zayavka_na_otgruzku_guid_OPN_uid != '71a708ae-98b2-11e0-856e-000423d2fac4'			-- Не Воронеж
+		--AND pkt.city_zayavka_na_otgruzku_guid_OPN_uid != '71a708b4-98b2-11e0-856e-000423d2fac4'			-- Не Липецк
+		AND pkt.batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
 	GROUP BY
-		batch_id_dttm								
-		,batch_id_str								
-		,toDate(datetime_id) 						
-		,unit_zayavka_na_otgruzku_guid_OPN_uid		
-		,unit_zayavka_na_otgruzku_name				
-		,city_zayavka_na_otgruzku_guid_OPN_uid		
-		,city_zayavka_na_otgruzku_name				
-		,toDate(data_otgruzki_zayavka_na_otgruzku_datetime)
-		,doc_zayavka_na_otgruzku_rasp_guid_1C_uid																-- 18.03.2026-Добавить
+		pkt.batch_id_dttm								
+		,pkt.batch_id_str								
+		,toDate(pkt.datetime_id) 						
+		,pkt.unit_zayavka_na_otgruzku_guid_OPN_uid		
+		,pkt.unit_zayavka_na_otgruzku_name				
+		,pkt.city_zayavka_na_otgruzku_guid_OPN_uid		
+		,pkt.city_zayavka_na_otgruzku_name				
+		,toDate(pkt.data_otgruzki_zayavka_na_otgruzku_datetime)
+		,pkt.doc_zayavka_na_otgruzku_rasp_guid_1C_uid																
 	--ORDER BY
-	--	city_zayavka_na_otgruzku_name
+	--	pkt.city_zayavka_na_otgruzku_name
 	) 
 ,
 za AS
@@ -151,6 +168,14 @@ SELECT
 		, unq.city_na_otgruzku_all_guid_OPN_uid
 		, coalesce(za.data_otgruzki_zayavka_na_otgruzku_date, toDate('1970-01-01'))
 	) 														AS date_unit_otgruzki_id
+	-- mg-20.03.2026 ------------------------------------------------------------------------------------
+	,tr.truck_rejs_rn_sort_1								AS truck_rejs_rn_sort_1
+	,tr.truck_rejs_rn_name_1								AS truck_rejs_rn_name_1
+	,tr.truck_rejs_rn_sort_2								AS truck_rejs_rn_sort_2
+	,tr.truck_rejs_rn_name_2								AS truck_rejs_rn_name_2
+	,tr.truck_rejs_rn_sort_3								AS truck_rejs_rn_sort_3
+	,tr.truck_rejs_rn_name_3								AS truck_rejs_rn_name_3
+	-- mg-20.03.2026 ------------------------------------------------------------------------------------
 FROM
 	unq
 	LEFT JOIN za
@@ -158,5 +183,9 @@ FROM
 		AND unq.date_id = za.date_id
 		AND unq.unit_na_otgruzku_all_guid_OPN_uid = za.unit_zayavka_na_otgruzku_guid_OPN_uid
 		AND unq.city_na_otgruzku_all_guid_OPN_uid = za.city_zayavka_na_otgruzku_guid_OPN_uid
+	-- mg-20.03.2026 ------------------------------------------------------------------------------------
+	LEFT JOIN rasp2.truck_rejs_rn as tr 
+		ON unq.city_na_otgruzku_all_guid_OPN_uid = tr.city_guid_OPN_uuid
+	-- mg-20.03.2026 ------------------------------------------------------------------------------------
 --ORDER BY
 --	unq.unit_na_otgruzku_all_name
