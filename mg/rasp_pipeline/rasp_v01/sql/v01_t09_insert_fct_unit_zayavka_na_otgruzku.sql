@@ -100,7 +100,7 @@ rd AS
 		rasp1.packet AS pkt
 		-- mg-20.03.2026 - Новый фильтр Розничных заказлв ---------------------------------------------------
 		INNER JOIN (SELECT unit_guid_uid FROM rasp2.unit_sale WHERE sales_direction_id = 2) AS urn		-- Включить, если не хотим, чтобы добавлялись рекламации!
-			ON pkt.unit_guid_OPN_uid = urn.unit_guid_uid
+			ON pkt.unit_guid_OPN_uid = urn.unit_guid_uid		-- Но тогда будут попадать отгрузки на Франчайзи, если у них указано "Ярославль Офис-склад" (ИП Волкова...)
 		-- mg-20.03.2026 ------------------------------------------------------------------------------------
 	WHERE
 		pkt.unit_zayavka_na_otgruzku_guid_OPN_uid != toUUID('00000000-0000-0000-0000-000000000000')
