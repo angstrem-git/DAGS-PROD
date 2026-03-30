@@ -70,7 +70,7 @@ WITH cte AS
 
 INSERT INTO [mg2].[art_type] ([art_id], [type_id])
 
--- 01.СТАНДАРТ
+-- 01.1.СТАНДАРТ-ПАКЕТЫ
 SELECT 
 		ar.[art_id]						
 		,1	AS [type_id]
@@ -109,6 +109,45 @@ WHERE
 						)
 				OR cte.s01_id = 1048			-- Пакеты универсальные
 		)
+
+UNION 
+
+-- mg-2026-03-30------------------------------------------------------------------------------------
+-- 01.2.СТАНДАРТ-МОДУЛИ
+SELECT 
+		ar.[art_id]						
+		,1	AS [type_id]
+		--,cte.[nomenclature_id]
+		--,cte.[nomenclature_name]
+		--,nom_prop.[nomenclature_property_id]
+		--,nom_prop.[nomenclature_property_name]
+FROM
+		cte	
+		LEFT JOIN [mg2].[art] AS ar ON cte.[nomenclature_id] = ar.[nomenclature_id] 	
+		LEFT JOIN [catalog].[nomenclature_property] AS nom_prop ON 
+				( (nom_prop.[nomenclature_property_id] = ar.[nomenclature_property_id] ) OR  
+				  (nom_prop.[nomenclature_property_id] IS NULL AND ar.[nomenclature_property_id] IS NULL) )			
+WHERE 
+		ar.[art_id] IS NOT NULL
+		AND ar.[art_id] NOT IN (SELECT [art_id] FROM [mg2].[art_type])
+		AND ( 
+				cte.s02_id IN	(
+							287			-- Корпусная мебель / Гостиные
+							,364		-- Корпусная мебель / Спальни
+							,662		-- Корпусная мебель / Кабинеты
+							,4539		-- Корпусная мебель / Детские
+							,771		-- Корпусная мебель / Прихожие
+							,195		-- Корпусная мебель / Отдельные предметы мебели
+							,110391		-- Корпусная мебель / Кровати универсальные
+							,120348		-- Корпусная мебель / Мебель для общей комнаты
+							,8152		-- Мягкая мебель / Кресла и пуфы
+							,112		-- Мягкая мебель / Диваны
+							,68			-- Мягкая мебель / Диванные подушки
+						)
+				OR cte.s01_id = 186		-- Малые формы
+				OR cte.s01_id = 139966	-- Корпусная мебель_СТАНДАРТ 2
+		)
+-- mg-2026-03-30------------------------------------------------------------------------------------
 
 UNION 
 
@@ -246,6 +285,12 @@ WHERE
 				cte.s00_id = 10			-- Сторонняя продукция
 				OR cte.s03_id = 137		-- Подушки 40*40
 		)
+		-- mg-2026-03-30------------------------------------------------------------------------------------
+		AND cte.s02_id NOT IN	(
+							12				-- Матрасы
+							,474			-- Наматрасники и чехлы					
+						)
+		-- mg-2026-03-30------------------------------------------------------------------------------------
 
 UNION 
 
@@ -342,6 +387,54 @@ WHERE
 				OR cte.s01_id = 93			-- Оформление торговой точки   
 		)
 
-
 -- 12.Подложки ДСП
 -- Отдельные номенклатуры
+
+UNION 
+
+-- mg-2026-03-30------------------------------------------------------------------------------------
+-- 13.МАТРАСЫ
+SELECT 
+		ar.[art_id]						
+		,13	AS [type_id]
+		--,cte.[nomenclature_id]
+		--,cte.[nomenclature_name]
+		--,nom_prop.[nomenclature_property_id]
+		--,nom_prop.[nomenclature_property_name]
+FROM
+		cte	
+		LEFT JOIN [mg2].[art] AS ar ON cte.[nomenclature_id] = ar.[nomenclature_id] 	
+		--LEFT JOIN [catalog].[nomenclature_property] AS nom_prop ON 
+		--		( (nom_prop.[nomenclature_property_id] = ar.[nomenclature_property_id] ) OR  
+		--		  (nom_prop.[nomenclature_property_id] IS NULL AND ar.[nomenclature_property_id] IS NULL) )			
+WHERE 
+		ar.[art_id] IS NOT NULL
+		AND ar.[art_id] NOT IN (SELECT [art_id] FROM [mg2].[art_type])
+		AND cte.s02_id IN	(
+							12				-- Матрасы
+							,474			-- Наматрасники и чехлы					
+						)
+-- mg-2026-03-30------------------------------------------------------------------------------------
+
+UNION 
+
+-- mg-2026-03-30------------------------------------------------------------------------------------
+-- 14.УСЛУГИ
+SELECT 
+		ar.[art_id]						
+		,14	AS [type_id]
+		--,cte.[nomenclature_id]
+		--,cte.[nomenclature_name]
+		--,nom_prop.[nomenclature_property_id]
+		--,nom_prop.[nomenclature_property_name]
+FROM
+		cte	
+		LEFT JOIN [mg2].[art] AS ar ON cte.[nomenclature_id] = ar.[nomenclature_id] 	
+		--LEFT JOIN [catalog].[nomenclature_property] AS nom_prop ON 
+		--		( (nom_prop.[nomenclature_property_id] = ar.[nomenclature_property_id] ) OR  
+		--		  (nom_prop.[nomenclature_property_id] IS NULL AND ar.[nomenclature_property_id] IS NULL) )			
+WHERE 
+		ar.[art_id] IS NOT NULL
+		AND ar.[art_id] NOT IN (SELECT [art_id] FROM [mg2].[art_type])
+		AND cte.s00_id = 53440			-- УСЛУГИ										
+-- mg-2026-03-30------------------------------------------------------------------------------------
