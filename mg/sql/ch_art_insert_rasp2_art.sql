@@ -10,7 +10,9 @@ INSERT INTO rasp2.art
 	nomenclature_property_id ,
 	nomenclature_property_guid_uuid ,
 	nomenclature_property_guid_str ,
-	nomenclature_property_name
+	nomenclature_property_name,
+	type_id ,
+	type_name
 )
 SELECT 
 	toInt64(art_id),
@@ -21,7 +23,9 @@ SELECT
 	toInt64(nomenclature_property_id),
 	toUUID(nomenclature_property_guid_str),
 	nomenclature_property_guid_str,
-	nomenclature_property_name
+	nomenclature_property_name,
+	type_id,
+	type_name
 FROM 
 	from_mssql.vw_art
 WHERE
