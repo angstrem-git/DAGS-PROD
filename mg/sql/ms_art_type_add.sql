@@ -291,6 +291,9 @@ WHERE
 							,474			-- Наматрасники и чехлы					
 						)
 		-- mg-2026-03-30------------------------------------------------------------------------------------
+		-- mg-2026-04-18------------------------------------------------------------------------------------
+		AND cte.s01_id <> 507				-- Бытовая техника
+		-- mg-2026-04-18------------------------------------------------------------------------------------
 
 UNION 
 
@@ -438,3 +441,27 @@ WHERE
 		AND ar.[art_id] NOT IN (SELECT [art_id] FROM [mg2].[art_type])
 		AND cte.s00_id = 53440			-- УСЛУГИ										
 -- mg-2026-03-30------------------------------------------------------------------------------------
+
+
+UNION 
+
+-- mg-2026-04-18------------------------------------------------------------------------------------
+-- 15.Бытовая техника		
+SELECT 
+		ar.[art_id]						
+		,15	AS [type_id]
+		--,cte.[nomenclature_id]
+		--,cte.[nomenclature_name]
+		--,nom_prop.[nomenclature_property_id]
+		--,nom_prop.[nomenclature_property_name]
+FROM
+		cte	
+		LEFT JOIN [mg2].[art] AS ar ON cte.[nomenclature_id] = ar.[nomenclature_id] 	
+		--LEFT JOIN [catalog].[nomenclature_property] AS nom_prop ON 
+		--		( (nom_prop.[nomenclature_property_id] = ar.[nomenclature_property_id] ) OR  
+		--		  (nom_prop.[nomenclature_property_id] IS NULL AND ar.[nomenclature_property_id] IS NULL) )			
+WHERE 
+		ar.[art_id] IS NOT NULL
+		AND ar.[art_id] NOT IN (SELECT [art_id] FROM [mg2].[art_type])
+		AND cte.s01_id = 507				-- Бытовая техника			
+-- mg-2026-04-18------------------------------------------------------------------------------------
