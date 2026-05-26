@@ -50,13 +50,7 @@ with DAG(
     tags=['rasp']
 ) as dag:
 
-    # t01 = ClickHouseOperator(
-    #     task_id="truncate_table_airflow_dates_test",
-    #     clickhouse_conn_id="click_onpremise_airflow",
-    #     sql="TRUNCATE TABLE test.airflow_dates_test"
-    # )
-
-    t02 = ClickHouseOperator(
+    t01 = ClickHouseOperator(
         task_id="insert_into_airflow_dates_test",
         clickhouse_conn_id="click_onpremise_airflow",
         sql="""
@@ -72,16 +66,30 @@ with DAG(
             )
             VALUES (
                 '{{ run_id }}'
-                ,toDateTime('{{ logical_date }}', 'Europe/Moscow')
+                ,parseDateTimeBestEffort('{{ logical_date }}', 'Europe/Moscow')
                 ,toDate('{{ ds }}')
-                ,toDateTime('{{ data_interval_start }}', 'Europe/Moscow')
+                ,parseDateTimeBestEffort('{{ data_interval_start }}', 'Europe/Moscow')
                 ,toDate('{{ data_interval_start | ds }}')
-                ,toDateTime('{{ data_interval_end }}', 'Europe/Moscow')
+                ,parseDateTimeBestEffort('{{ data_interval_end }}', 'Europe/Moscow')
                 ,toDate('{{ data_interval_end | ds }}')
-                ,toDateTime('{{ ts }}', 'Europe/Moscow')
+                ,parseDateTimeBestEffort('{{ ts }}', 'Europe/Moscow')
             )
         """
     )
 
-    #t02
+
+    def debug_dates(**context):
+        print("run_id = ", context["run_id"])
+        print("ds = ", context["ds"])
+        print("logical_date = ", context["logical_date"])
+        print("data_interval_start = ", context["data_interval_start"])
+        print("data_interval_end = ", context["data_interval_end"])
+
+
+    t02 = PythonOperator(
+        task_id="debug_dates",
+        python_callable=debug_dates
+    )
+
+    t01 >> t02
 
