@@ -59,6 +59,7 @@ def get_batch_id_dttm(**context):
         WHERE date_id = toDate('{ dt }')	
         ORDER BY create_dttm DESC	
         LIMIT 1
+        FORMAT JSON
     """
 
     query_encoded = urllib.parse.quote(query_text)
