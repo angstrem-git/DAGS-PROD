@@ -45,7 +45,7 @@ with DAG(
     dag_id=f"test_{RELEASE}_rasp",
     description="Преобразование данных rasp",
     start_date=pendulum.datetime(2024, 12, 31, tz=local_tz),
-    schedule="30 7 * * *",  # 07:30 MSK
+    schedule = CronTriggerTimetable("30 7 * * *", timezone=local_tz)
     catchup=False,
     tags=['rasp']
 ) as dag:
