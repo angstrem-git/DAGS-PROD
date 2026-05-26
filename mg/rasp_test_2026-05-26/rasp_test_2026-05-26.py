@@ -91,11 +91,11 @@ def get_batch_id_dttm(**context):
     return True
 
 
-    def print_xcom(**context):
-        batch_id_dttm = context["ti"].xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm")
-        print("batch_id_dttm =", batch_id_dttm)
-        date_id = context["ti"].xcom_pull(task_ids="wait_for_batch", key="date_id")
-        print("date_id =", date_id)
+def print_xcom(**context):
+    batch_id_dttm = context["ti"].xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm")
+    print("batch_id_dttm =", batch_id_dttm)
+    date_id = context["ti"].xcom_pull(task_ids="wait_for_batch", key="date_id")
+    print("date_id =", date_id)
 
 
 with DAG(
