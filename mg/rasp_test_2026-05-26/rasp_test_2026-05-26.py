@@ -87,6 +87,9 @@ with DAG(
         print("logical_date tz =", context["logical_date"].tzinfo)
         print("logical_date iso =", context["logical_date"].isoformat())
 
+        from pprint import pprint
+        pprint(context)
+
 
     t02 = PythonOperator(
         task_id="debug_dates",
