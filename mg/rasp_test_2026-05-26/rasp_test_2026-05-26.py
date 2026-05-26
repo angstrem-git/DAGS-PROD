@@ -19,7 +19,6 @@ from airflow.providers.standard.sensors.python import PythonSensor				# Для A
 from airflow.providers.standard.operators.python import PythonOperator			# Для Airflow v3
 from airflow.providers.ssh.operators.ssh import SSHOperator						# Для Airflow v3
 from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator	# Внешний сервис
-from airflow.timetables.cron import CronTriggerTimetable                        # Для интервальной работы
 from pendulum import datetime													# Лучше from pendulum, чем from datetime			
 import pendulum
 import urllib.parse
@@ -46,7 +45,7 @@ with DAG(
     dag_id=f"test_{RELEASE}_rasp",
     description="Преобразование данных rasp",
     start_date=pendulum.datetime(2024, 12, 31, tz=local_tz),
-    schedule = CronTriggerTimetable("30 7 * * *", timezone=local_tz),
+    schedule = "30 7 * * *",
     catchup=False,
     tags=['rasp']
 ) as dag:
