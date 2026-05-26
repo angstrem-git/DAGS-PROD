@@ -33,12 +33,69 @@ DB1 = f"rasp1_{RELEASE}"
 DB2 = f"rasp2_{RELEASE}"
 DB3 = f"rasp3_{RELEASE}"
 
+DB1_test = "dev1"
+
 ch = BaseHook.get_connection("click_onpremise_http_etl")
 URL = f"http://{ch.host}:{ch.port}"
 USER = ch.login
 PASSWORD = ch.password
 
 DAG_DIR = Path(__file__).parent  # Путь к текущей папке DAG
+
+
+def get_batch_id_dttm(**context):
+
+    dt = context["data_interval_end"].date()
+
+    query_text = f"""
+        SELECT 
+            DISTINCT
+            batch_id_dttm 
+            ,batch_id_str
+            ,create_dttm
+            ,date_id
+        --FROM rasp3_v01.dim_packet_processed_batches 
+        FROM dev1.packet							-- Вернуть FROM rasp3_v01.dim_packet_processed_batches
+        WHERE date_id = toDate('{ dt }')	
+        ORDER BY create_dttm DESC	
+        LIMIT 1
+    """
+
+    query_encoded = urllib.parse.quote(query_text)
+    full_url = f"{URL}/?database={DB1_test}&query={query_encoded}"
+
+    r = requests.post(
+		full_url,
+		auth=HTTPBasicAuth(USER, PASSWORD),
+		headers={"Content-Type": "text/plain"},
+		timeout=60,
+	)
+    r.raise_for_status()
+
+    d = r.json()["data"]
+    if len(d) == 0:
+        return False
+    
+    batch_id_dttm = d[0].get("batch_id_dttm")
+    context["ti"].xcom_push(
+        key="batch_id_dttm",
+        value=batch_id_dttm
+    )
+    
+    date_id = d[0].get("date_id")
+    context["ti"].xcom_push(
+        key="date_id",
+        value=date_id
+        )
+    
+    return True
+
+
+    def print_xcom(**context):
+        batch_id_dttm = context["ti"].xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm")
+        print("batch_id_dttm =", batch_id_dttm)
+        date_id = context["ti"].xcom_pull(task_ids="wait_for_batch", key="date_id")
+        print("date_id =", date_id)
 
 
 with DAG(
@@ -49,52 +106,71 @@ with DAG(
     catchup=False,
     tags=['rasp']
 ) as dag:
-
-    t01 = ClickHouseOperator(
-        task_id="insert_into_airflow_dates_test",
-        clickhouse_conn_id="click_onpremise_airflow",
-        sql="""
-            INSERT INTO test.airflow_dates_test(
-                run_id 
-                ,logical_date 
-                ,ds 
-                ,data_interval_start 
-                ,data_interval_start_ds 
-                ,data_interval_end 
-                ,data_interval_end_ds 
-                ,ts 
-            )
-            VALUES (
-                '{{ run_id }}'
-                ,parseDateTimeBestEffort('{{ logical_date }}', 'Europe/Moscow')
-                ,toDate('{{ ds }}')
-                ,parseDateTimeBestEffort('{{ data_interval_start }}', 'Europe/Moscow')
-                ,toDate('{{ data_interval_start | ds }}')
-                ,parseDateTimeBestEffort('{{ data_interval_end }}', 'Europe/Moscow')
-                ,toDate('{{ data_interval_end | ds }}')
-                ,parseDateTimeBestEffort('{{ ts }}', 'Europe/Moscow')
-            )
-        """
+    
+    # Служебный таск: получить batch_id_dttm. Убрать, когда будут вставлять в продовый DAG
+    t_001 = PythonOperator(
+        task_id="wait_for_batch",
+        python_callable=get_batch_id_dttm
     )
 
-
-    def debug_dates(**context):
-        print("run_id = ", context["run_id"])
-        print("ds = ", context["ds"])
-        print("logical_date = ", context["logical_date"])
-        print("data_interval_start = ", context["data_interval_start"])
-        print("data_interval_end = ", context["data_interval_end"])
-        print("logical_date tz =", context["logical_date"].tzinfo)
-        print("logical_date iso =", context["logical_date"].isoformat())
-
-        from pprint import pprint
-        pprint(context)
-
-
-    t02 = PythonOperator(
-        task_id="debug_dates",
-        python_callable=debug_dates
+    t_002 = PythonOperator(
+        task_id="print_xcom",
+        python_callable=print_xcom
     )
 
-    t01 >> t02
+    t_001 >> t_002 
 
+    # test_t01 = ClickHouseOperator(
+    #     task_id="insert_into_airflow_dates_test",
+    #     clickhouse_conn_id="click_onpremise_airflow",
+    #     sql="""
+    #         INSERT INTO test.airflow_dates_test(
+    #             run_id 
+    #             ,logical_date 
+    #             ,ds 
+    #             ,data_interval_start 
+    #             ,data_interval_start_ds 
+    #             ,data_interval_end 
+    #             ,data_interval_end_ds 
+    #             ,ts 
+    #         )
+    #         VALUES (
+    #             '{{ run_id }}'
+    #             ,parseDateTimeBestEffort('{{ logical_date }}', 'Europe/Moscow')
+    #             ,toDate('{{ ds }}')
+    #             ,parseDateTimeBestEffort('{{ data_interval_start }}', 'Europe/Moscow')
+    #             ,toDate('{{ data_interval_start | ds }}')
+    #             ,parseDateTimeBestEffort('{{ data_interval_end }}', 'Europe/Moscow')
+    #             ,toDate('{{ data_interval_end | ds }}')
+    #             ,parseDateTimeBestEffort('{{ ts }}', 'Europe/Moscow')
+    #         )
+    #     """
+    # )
+
+
+    # def debug_dates(**context):
+    #     print("run_id = ", context["run_id"])
+    #     print("ds = ", context["ds"])
+    #     print("logical_date = ", context["logical_date"])
+    #     print("data_interval_start = ", context["data_interval_start"])
+    #     print("data_interval_end = ", context["data_interval_end"])
+    #     print("logical_date tz =", context["logical_date"].tzinfo)
+    #     print("logical_date iso =", context["logical_date"].isoformat())
+
+    #     from pprint import pprint
+    #     pprint(context)
+
+
+    # test_t02 = PythonOperator(
+    #     task_id="debug_dates",
+    #     python_callable=debug_dates
+    # )
+
+    # test_t01 >> test_t02
+
+
+    
+
+
+
+  
