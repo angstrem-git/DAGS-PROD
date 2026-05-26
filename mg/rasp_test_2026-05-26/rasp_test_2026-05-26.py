@@ -84,6 +84,8 @@ with DAG(
         print("logical_date = ", context["logical_date"])
         print("data_interval_start = ", context["data_interval_start"])
         print("data_interval_end = ", context["data_interval_end"])
+        print("logical_date tz =", context["logical_date"].tzinfo)
+        print("logical_date iso =", context["logical_date"].isoformat())
 
 
     t02 = PythonOperator(
