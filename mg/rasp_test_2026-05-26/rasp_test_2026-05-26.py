@@ -19,6 +19,7 @@ from airflow.providers.standard.sensors.python import PythonSensor				# Для A
 from airflow.providers.standard.operators.python import PythonOperator			# Для Airflow v3
 from airflow.providers.ssh.operators.ssh import SSHOperator						# Для Airflow v3
 from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator	# Внешний сервис
+from airflow_clickhouse_plugin.hooks.clickhouse import ClickHouseHook
 from airflow.operators.python import ShortCircuitOperator
 from pendulum import datetime													# Лучше from pendulum, чем from datetime			
 import pendulum
@@ -63,23 +64,29 @@ def check_input_data(**context):
             ) AS cnt_packet
     """
     
-    params={
-        "query": query_text
-    }
+    # params={
+    #     "query": query_text
+    # }
 
-    r = requests.get(
-            URL,
-            params=params,
-            auth=HTTPBasicAuth(USER, PASSWORD)
-        )
-    r.raise_for_status()
-    result = r.text.strip().split("\t")
+    # r = requests.get(
+    #         URL,
+    #         params=params,
+    #         auth=HTTPBasicAuth(USER, PASSWORD)
+    #     )
+    # r.raise_for_status()
+    # result = r.text.strip().split("\t")
 
-    cnt1 = int(result[0])
-    cnt2 = int(result[1])
+    # cnt1 = int(result[0])
+    # cnt2 = int(result[1])
+
+    # return (cnt1 > 0) and (cnt2 > 0)
+
+    hook = ClickHouseHook(clickhouse_conn_id="click_onpremise_http_etl")
+
+    result = hook.execute(query_text)   # Возвращает [(cnt_orders, cnt_packet)]
+    cnt1, cnt2 = result[0]
 
     return (cnt1 > 0) and (cnt2 > 0)
-
 
 
 def get_batch_id_dttm(**context):
