@@ -67,7 +67,11 @@ def check_input_data(**context):
         "query": query_text
     }
 
-    r = requests.get(URL, params=params)
+    r = requests.get(
+            URL,
+            params=params,
+            auth=HTTPBasicAuth(USER, PASSWORD)
+        )
     r.raise_for_status()
     result = r.text.strip().split("\t")
 
