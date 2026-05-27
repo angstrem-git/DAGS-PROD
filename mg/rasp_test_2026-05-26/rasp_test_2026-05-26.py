@@ -81,7 +81,7 @@ def check_input_data(**context):
 
     # return (cnt1 > 0) and (cnt2 > 0)
 
-    hook = ClickHouseHook(clickhouse_conn_id="click_onpremise_http_etl")
+    hook = ClickHouseHook(clickhouse_conn_id="click_onpremise_airflow")     # Порт 9000
 
     result = hook.execute(query_text)   # Возвращает [(cnt_orders, cnt_packet)]
     cnt1, cnt2 = result[0]
