@@ -19,6 +19,7 @@ from airflow.providers.standard.sensors.python import PythonSensor				# Для A
 from airflow.providers.standard.operators.python import PythonOperator			# Для Airflow v3
 from airflow.providers.ssh.operators.ssh import SSHOperator						# Для Airflow v3
 from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator	# Внешний сервис
+from airflow.providers.standard.operators.short_circuit import ShortCircuitOperator
 from pendulum import datetime													# Лучше from pendulum, чем from datetime			
 import pendulum
 import urllib.parse
@@ -41,6 +42,40 @@ USER = ch.login
 PASSWORD = ch.password
 
 DAG_DIR = Path(__file__).parent  # Путь к текущей папке DAG
+
+
+def check_input_data(**context):
+    
+    dt = context["data_interval_end"].date()
+
+    query_text = f"""
+        SELECT
+            (
+                SELECT count()
+                FROM rasp2.open_orders_goods_history_rn
+                WHERE date_id = toDate('{dt}')
+            ) AS cnt_orders
+            ,
+            (
+                SELECT count()
+                FROM dev1.packet
+                WHERE date_id = toDate('{dt}')
+            ) AS cnt_packet
+    """
+    
+    params={
+        "query": query_text
+    }
+
+    r = requests.get(URL, params=params)
+    r.raise_for_status()
+    result = r.text.strip().split("\t")
+
+    cnt1 = int(result[0])
+    cnt2 = int(result[1])
+
+    return (cnt1 > 0) and (cnt2 > 0)
+
 
 
 def get_batch_id_dttm(**context):
@@ -108,6 +143,11 @@ with DAG(
     tags=['rasp']
 ) as dag:
     
+    t00 = ShortCircuitOperator(
+        task_id="check_input_data",
+        python_callable=check_input_data
+    )
+
     # Служебный таск: получить batch_id_dttm. Убрать, когда будут вставлять в продовый DAG
     t_001 = PythonOperator(
         task_id="wait_for_batch",
@@ -119,7 +159,7 @@ with DAG(
         python_callable=print_xcom
     )
 
-    t_001 >> t_002 
+    t00 >> t_001 >> t_002 
 
     # test_t01 = ClickHouseOperator(
     #     task_id="insert_into_airflow_dates_test",
