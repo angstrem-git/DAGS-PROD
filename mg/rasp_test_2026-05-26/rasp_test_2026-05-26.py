@@ -89,6 +89,55 @@ def check_input_data(**context):
     return (cnt1 > 0) and (cnt2 > 0)
 
 
+# def get_batch_id_dttm(**context):
+
+#     dt = context["data_interval_end"].date()
+
+#     query_text = f"""
+#         SELECT 
+#             DISTINCT
+#             batch_id_dttm 
+#             ,batch_id_str
+#             ,create_dttm
+#             ,date_id
+#         --FROM rasp3_v01.dim_packet_processed_batches 
+#         FROM dev1.packet							-- Вернуть FROM rasp3_v01.dim_packet_processed_batches
+#         WHERE date_id = toDate('{ dt }')	
+#         ORDER BY create_dttm DESC	
+#         LIMIT 1
+#         FORMAT JSON
+#     """
+
+#     query_encoded = urllib.parse.quote(query_text)
+#     full_url = f"{URL}/?database={DB1_test}&query={query_encoded}"
+
+#     r = requests.post(
+# 		full_url,
+# 		auth=HTTPBasicAuth(USER, PASSWORD),
+# 		headers={"Content-Type": "text/plain"},
+# 		timeout=60,
+# 	)
+#     r.raise_for_status()
+
+#     d = r.json()["data"]
+#     if len(d) == 0:
+#         return False
+    
+#     batch_id_dttm = d[0].get("batch_id_dttm")
+#     context["ti"].xcom_push(
+#         key="batch_id_dttm",
+#         value=batch_id_dttm
+#     )
+    
+#     date_id = d[0].get("date_id")
+#     context["ti"].xcom_push(
+#         key="date_id",
+#         value=date_id
+#         )
+    
+#     return True
+
+
 def get_batch_id_dttm(**context):
 
     dt = context["data_interval_end"].date()
@@ -105,31 +154,18 @@ def get_batch_id_dttm(**context):
         WHERE date_id = toDate('{ dt }')	
         ORDER BY create_dttm DESC	
         LIMIT 1
-        FORMAT JSON
     """
-
-    query_encoded = urllib.parse.quote(query_text)
-    full_url = f"{URL}/?database={DB1_test}&query={query_encoded}"
-
-    r = requests.post(
-		full_url,
-		auth=HTTPBasicAuth(USER, PASSWORD),
-		headers={"Content-Type": "text/plain"},
-		timeout=60,
-	)
-    r.raise_for_status()
-
-    d = r.json()["data"]
-    if len(d) == 0:
-        return False
     
-    batch_id_dttm = d[0].get("batch_id_dttm")
+    hook = ClickHouseHook(clickhouse_conn_id="click_onpremise_airflow")     # Порт 9000
+
+    result = hook.execute(query_text)   # Возвращает [(batch_id_dttm, batch_id_str, create_dttm, date_id)]
+    batch_id_dttm, batch_id_str, create_dttm, date_id = result[0]
+    
     context["ti"].xcom_push(
         key="batch_id_dttm",
         value=batch_id_dttm
     )
     
-    date_id = d[0].get("date_id")
     context["ti"].xcom_push(
         key="date_id",
         value=date_id
@@ -154,6 +190,8 @@ with DAG(
     tags=['rasp']
 ) as dag:
     
+    # ShortCircuitOperator останавливает выполнение следующих task, если условие в нем возвращает False
+    # В данном случае: остановить DAG, если нет данных
     t00 = ShortCircuitOperator(
         task_id="check_input_data",
         python_callable=check_input_data
