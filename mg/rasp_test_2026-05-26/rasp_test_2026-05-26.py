@@ -2,13 +2,13 @@
 RELEASE = "v02"
 
 # Используем f-string для динамического формирования пути
-from importlib import import_module
+#from importlib import import_module
 # Динамически импортируем функцию из файла, где имя папки зависит от RELEASE
-module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t01_wait_for_batch")
-wait_for_batch = getattr(module, "wait_for_batch")
+#module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t01_wait_for_batch")
+#wait_for_batch = getattr(module, "wait_for_batch")
 #from rasp_v01.py.v01_t01_wait_for_batch import wait_for_batch  # импортируем функцию wait_for_batch из отдельного файла v01_t01_wait_for_batch
-module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t02_check_sum")
-check_sum = getattr(module, "check_sum")
+#module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t02_check_sum")
+#check_sum = getattr(module, "check_sum")
 #from rasp_v01.py.v01_t02_check_sum import check_sum  # импортируем функцию check_sum из отдельного файла v01_t02_check_sum
 
 
