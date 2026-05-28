@@ -168,7 +168,7 @@ def get_batch_id_dttm(**context):
     
     context["ti"].xcom_push(
         key="date_id",
-        value=str((date_id)
+        value=str(date_id)
         )
     
     return True
