@@ -35,7 +35,7 @@ DB1 = f"rasp1_{RELEASE}"
 DB2 = f"rasp2_{RELEASE}"
 DB3 = f"rasp3_{RELEASE}"
 
-DB1_test = "dev1"
+DB1_source = "dev1"
 
 ch = BaseHook.get_connection("click_onpremise_http_etl")
 URL = f"http://{ch.host}:{ch.port}"
@@ -109,7 +109,7 @@ def check_input_data(**context):
 #     """
 
 #     query_encoded = urllib.parse.quote(query_text)
-#     full_url = f"{URL}/?database={DB1_test}&query={query_encoded}"
+#     full_url = f"{URL}/?database={DB1_source}&query={query_encoded}"
 
 #     r = requests.post(
 # 		full_url,
@@ -208,7 +208,68 @@ with DAG(
         python_callable=print_xcom
     )
 
-    t00 >> t_001 >> t_002 
+    t02_01 = ClickHouseOperator(
+        task_id="insert_all_goods",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t02_01_insert_all_goods.sql",	# Относительный путь относительно файла DAG-а
+        params={			
+            "db1_source": DB1_source,					
+            "db2": DB2							
+	    }
+    )
+
+    t02_02 = ClickHouseOperator(
+        task_id="insert_all_orders",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t02_02_insert_all_orders.sql",	# Относительный путь относительно файла DAG-а
+        params={			
+            "db1_source": DB1_source,					
+            "db2": DB2 						
+	    }
+    )
+
+    t02_03 = ClickHouseOperator(
+        task_id="insert_self_order",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t02_03_insert_self_order.sql",	# Относительный путь относительно файла DAG-а
+        params={			
+            "db1_source": DB1_source,					
+            "db2": DB2,
+            "db3": DB3 						
+	    }
+    )
+
+    t02_04 = ClickHouseOperator(
+        task_id="insert_full_order",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t02_04_insert_full_order.sql",	# Относительный путь относительно файла DAG-а
+        params={			
+            "db1_source": DB1_source,					
+            "db3": DB3 						
+	    }
+    )
+
+    t02_05 = ClickHouseOperator(
+        task_id="insert_fct_order_has_goods_type_bridge",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t02_05_insert_fct_order_has_goods_type_bridge.sql",	# Относительный путь 
+        params={			
+            "db1_source": DB1_source,					
+            "db3": DB3					
+	    }
+    )
+
+    t02_06 = ClickHouseOperator(
+        task_id="insert_fct_order_deficit_goods_type_bridge",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t02_06_insert_fct_order_deficit_goods_type_bridge.sql",	# Относительный путь
+        params={			
+            "db1_source": DB1_source,					
+            "db3": DB3					
+	    } 
+    )
+
+    t00 >> t_001 >> t_002 >> t02_01 >> t02_02 >> t02_03 >> t02_04 >> t02_05 >> t02_06
 
     # test_t01 = ClickHouseOperator(
     #     task_id="insert_into_airflow_dates_test",
