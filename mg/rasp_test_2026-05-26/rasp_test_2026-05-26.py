@@ -1,5 +1,5 @@
 ﻿# Устанавливаем значение переменной RELEASE
-RELEASE = "v01"
+RELEASE = "v02"
 
 # Используем f-string для динамического формирования пути
 from importlib import import_module
@@ -31,9 +31,9 @@ from pathlib import Path
 
 local_tz = pendulum.timezone("Europe/Moscow")
 
-DB1 = f"rasp1_{RELEASE}"
-DB2 = f"rasp2_{RELEASE}"
-DB3 = f"rasp3_{RELEASE}"
+DB1 = f"dev1_{RELEASE}"
+DB2 = f"dev2_{RELEASE}"
+DB3 = f"dev3_{RELEASE}"
 
 DB1_source = "dev1"
 
