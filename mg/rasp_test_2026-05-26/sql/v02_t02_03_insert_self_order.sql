@@ -1,4 +1,4 @@
--- "db1_source": DB1_source
+﻿-- "db1_source": DB1_source
 -- "db2": DB2
 -- "db3": DB3
 WITH 
@@ -241,7 +241,10 @@ FROM
 				rs.count_deficit > 0
 				AND rs.count_not_ispolzuemaya_create_date_modul_without_vypusk > 0
 			)																				AS is_51_net_snyatogo_tovara	-- Нет снятого товара
-		,(rs.count_deficit > 0)																AS is_52_net_ne_snyatogo_tovara -- Нет НЕ снятого товара
+		,(
+				rs.count_deficit > 0
+				AND rs.count_not_ispolzuemaya_create_date_modul_without_vypusk = 0
+			)																				AS is_52_net_ne_snyatogo_tovara -- Нет НЕ снятого товара
 		,rs.order_roznica_doc_num															AS order_roznica_doc_num
 		,rs.order_roznica_doc_datetime														AS order_roznica_doc_datetime
 		,rs.unit_guid_uid																	AS unit_guid_uid
@@ -502,13 +505,16 @@ SELECT
 	,cte.total_sum_total											AS total_sum_total
 	,cte.source_stage_id											AS source_stage_id
 	--,cte.source_stage_name											AS source_stage_name
-	,dictGet('rasp2.dict_source_stage', 'source_stage_name', cte.source_stage_id)			AS source_stage_name
+	--,dictGet('rasp2.dict_source_stage', 'source_stage_name', cte.source_stage_id)			AS source_stage_name
+	,''														AS source_stage_name
 	,cte.order_stage_id												AS order_stage_id
 	--,cte.order_stage_name											AS order_stage_name
-	,dictGet('rasp2.dict_order_stage', 'order_stage_name', cte.order_stage_id)				AS order_stage_name
+	--,dictGet('rasp2.dict_order_stage', 'order_stage_name', cte.order_stage_id)				AS order_stage_name
+	,''													AS order_stage_name
 	,cte.order_sub_stage_id											AS order_sub_stage_id
 	--,cte.order_sub_stage_name										AS order_sub_stage_name
-	,dictGet('rasp2.dict_order_sub_stage', 'order_sub_stage_name', cte.order_sub_stage_id)	AS order_sub_stage_name
+	--,dictGet('rasp2.dict_order_sub_stage', 'order_sub_stage_name', cte.order_sub_stage_id)	AS order_sub_stage_name
+	,'' 													AS order_sub_stage_name
 	,cte.has_std1													AS has_std1
 	,cte.is_deficit_std1											AS is_deficit_std1
 	,cte.total_sum_std1												AS total_sum_std1
