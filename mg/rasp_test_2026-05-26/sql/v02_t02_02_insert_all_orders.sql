@@ -8,6 +8,7 @@ cte_dt AS
 		,batch_id_str			AS batch_id_str
 		,create_dttm			AS create_dttm
 		,toDate(datetime_id)	AS date_id
+		,datetime_id			AS datetime_id
 	FROM {{ params.db1_source }}.packet_load_batch
 	--WHERE toDate(datetime_id) = toDate('2026-05-15')
 	WHERE batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
@@ -230,6 +231,7 @@ FROM
 			rasp1.parametry_zakaza
 		 WHERE	
 			schetchik_perenosov = 1
+			AND datetime_id <= (SELECT datetime_id FROM cte_dt ORDER BY create_dttm DESC LIMIT 1)	-- Добавлено 30.05.2026
 		 GROUP BY	
 			doc_order_rn_guid_1C_uid
 		) AS cel
