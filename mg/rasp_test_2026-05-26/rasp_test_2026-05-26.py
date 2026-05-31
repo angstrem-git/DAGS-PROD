@@ -101,8 +101,8 @@ def check_input_data(**context):
 #             ,batch_id_str
 #             ,create_dttm
 #             ,date_id
-#         FROM rasp3_v01.dim_packet_processed_batches 
-#         --FROM {DB1_source}.packet				-- Вернуть FROM rasp3_v01.dim_packet_processed_batches
+#         --FROM rasp3_v01.dim_packet_processed_batches 
+#         FROM {DB1_source}.packet				-- Вернуть FROM rasp3_v01.dim_packet_processed_batches
 #         WHERE date_id = toDate('{ dt }')	
 #         ORDER BY create_dttm DESC	
 #         LIMIT 1
@@ -150,8 +150,8 @@ def get_batch_id_dttm(**context):
             ,batch_id_str
             ,create_dttm
             ,date_id
-        --FROM rasp3_v01.dim_packet_processed_batches 
-        FROM dev1.packet							-- Вернуть FROM rasp3_v01.dim_packet_processed_batches
+        FROM rasp3_v01.dim_packet_processed_batches 
+        --FROM {DB1_source}.packet				-- Вернуть FROM rasp3_v01.dim_packet_processed_batches
         WHERE date_id = toDate('{ dt }')	
         ORDER BY create_dttm DESC	
         LIMIT 1
