@@ -35,7 +35,8 @@ DB1 = f"dev1_{RELEASE}"
 DB2 = f"dev2_{RELEASE}"
 DB3 = f"dev3_{RELEASE}"
 
-DB1_source = "dev1"
+#DB1_source = "dev1"
+DB1_source = "rasp1"
 
 ch = BaseHook.get_connection("click_onpremise_http_etl")
 URL = f"http://{ch.host}:{ch.port}"
