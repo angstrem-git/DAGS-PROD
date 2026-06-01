@@ -4,11 +4,12 @@ WITH
 cte_dt AS 
 	(
 	SELECT 
-	 	batch_id_dttm			AS batch_id_dttm	
-		,batch_id_str			AS batch_id_str
-		,create_dttm			AS create_dttm
-		,toDate(datetime_id)	AS date_id
-		,datetime_id			AS datetime_id
+	 	batch_id_dttm						AS batch_id_dttm	
+		,batch_id_str						AS batch_id_str
+		,create_dttm						AS create_dttm
+		,toDate(datetime_id)				AS date_id
+		,addDays(toDate(datetime_id), -1) 	AS prev_date_id		-- Добавлено 2026-06-01
+		,datetime_id						AS datetime_id
 	FROM {{ params.db1_source }}.packet_load_batch
 	--WHERE toDate(datetime_id) = toDate('2026-05-15')
 	WHERE batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
@@ -219,7 +220,8 @@ FROM
 			from_mssql.mg_VPointStatusIndividualOrders 
 		 WHERE
 		 	--point_date = toDate('2026-05-15')
-		 	point_date = (SELECT date_id FROM cte_dt LIMIT 1)
+		 	--point_date = (SELECT date_id FROM cte_dt LIMIT 1)
+		 	point_date = (SELECT prev_date_id FROM cte_dt LIMIT 1) 	-- Изменено 2026-06-01 (point_date - это вчера, данные по итога дня)
 		)AS mip 
 		ON cte.order_roznica_guid_uid = mip.order_guid_uid
 	-- Переносы РГС - до какой даты последний перенос	
