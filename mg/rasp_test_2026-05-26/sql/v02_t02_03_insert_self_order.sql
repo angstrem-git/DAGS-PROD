@@ -485,95 +485,94 @@ INSERT INTO {{ params.db3 }}.self_order(
 	,norma_days_dostavki_iz_voronezha		-- V
 )
 SELECT
-	cte.batch_id_dttm												AS batch_id_dttm							
-	,cte.batch_id_str												AS batch_id_str							
-	,cte.create_dttm												AS create_dttm
-	,cte.date_id													AS date_id
-	,cte.order_id													AS order_id
-	,cte.order_roznica_guid_uid										AS order_roznica_guid_uid
-	,cte.order_roznica_doc_num										AS order_roznica_doc_num
-	,cte.order_roznica_doc_datetime									AS order_roznica_doc_datetime
-	,cte.unit_guid_uid												AS unit_guid_uid
-	,cte.unit_name													AS unit_name
-	,cte.city_guid_uid												AS city_guid_uid
-	,cte.city_name													AS city_name
-	,cte.full_order_id												AS full_order_id
-	,cte.full_order_roznica_guid_uid								AS full_order_roznica_guid_uid
-	,cte.full_order_roznica_number									AS full_order_roznica_number
-	,cte.full_order_roznica_datetime								AS full_order_roznica_datetime		
-	,cte.is_link_order												AS is_link_order
-	,cte.total_sum_total											AS total_sum_total
-	,cte.source_stage_id											AS source_stage_id
-	--,cte.source_stage_name											AS source_stage_name
-	--,dictGet('rasp2.dict_source_stage', 'source_stage_name', cte.source_stage_id)			AS source_stage_name
-	,''														AS source_stage_name
-	,cte.order_stage_id												AS order_stage_id
-	--,cte.order_stage_name											AS order_stage_name
-	--,dictGet('rasp2.dict_order_stage', 'order_stage_name', cte.order_stage_id)				AS order_stage_name
-	,''													AS order_stage_name
-	,cte.order_sub_stage_id											AS order_sub_stage_id
-	--,cte.order_sub_stage_name										AS order_sub_stage_name
-	--,dictGet('rasp2.dict_order_sub_stage', 'order_sub_stage_name', cte.order_sub_stage_id)	AS order_sub_stage_name
-	,'' 													AS order_sub_stage_name
-	,cte.has_std1													AS has_std1
-	,cte.is_deficit_std1											AS is_deficit_std1
-	,cte.total_sum_std1												AS total_sum_std1
-	,cte.has_std2													AS has_std2
-	,cte.is_deficit_std2											AS is_deficit_std2
-	,cte.total_sum_std2												AS total_sum_std2
-	,cte.has_mip													AS has_mip
-	,cte.is_deficit_mip												AS is_deficit_mip
-	,cte.total_sum_mip												AS total_sum_mip
-	,cte.has_kich													AS has_kich
-	,cte.is_deficit_kich											AS is_deficit_kich
-	,cte.total_sum_kich												AS total_sum_kich
-	,cte.has_stor													AS has_stor
-	,cte.is_deficit_stor											AS is_deficit_stor
-	,cte.total_sum_stor												AS total_sum_stor
-	,cte.has_matr													AS has_matr
-	,cte.is_deficit_matr											AS is_deficit_matr
-	,cte.total_sum_matr												AS total_sum_matr
-	,cte.has_tech													AS has_tech
-	,cte.is_deficit_tech											AS is_deficit_tech
-	,cte.total_sum_tech												AS total_sum_tech
-	,cte.has_other													AS has_other
-	,cte.is_deficit_other											AS is_deficit_other
-	,cte.total_sum_other											AS total_sum_other
-	,cte.has_serv													AS has_serv
-	,cte.total_sum_serv												AS total_sum_serv
-	,cte.client_id													AS client_id							-- V
-	,cte.client_name												AS client_name							-- V
-	,cte.client_guid_uid											AS client_guid_uid						-- V
-	,cte.order_phone												AS order_phone							-- V
-	,cte.employee_id												AS employee_id							-- V
-	,cte.employee_name												AS employee_name						-- V
-	,cte.employee_guid_uid											AS employee_guid_uid					-- V
-	,cte.is_mip														AS is_mip								-- V
-	,cte.is_kitchen													AS is_kitchen							-- V
-	,cte.mipik_status_id											AS mipik_status_id						-- V 1 - Оплата, 2 - Дизайнер, 3 - Конструктор, 4 - Материалы, 5 - Производство, 6 - Логистика, 7 - Сервис
-	,cte.mipik_status_name											AS mipik_status_name					-- V
-	,cte.mipik_status_order											AS mipik_status_order					-- V
-	,cte.mipik_collection_id										AS mipik_collection_id					-- V
-	,cte.mipik_collection_name										AS mipik_collection_name 				-- V
-	,cte.mipik_collection_guid_uid									AS mipik_collection_guid_uid 			-- V
-	,cte.mipik_assortiment_group_id									AS mipik_assortiment_group_id 			-- V
-	,cte.mipik_assortiment_group_name								AS mipik_assortiment_group_name 		-- V
-	,cte.mipik_assortiment_group_guid_uid							AS mipik_assortiment_group_guid_uid 	-- V
-	,cte.mipik_customization_type_id								AS mipik_customization_type_id 			-- V
-	,cte.mipik_customization_type_name								AS mipik_customization_type_name 		-- V
-	,cte.mipik_customization_type_guid_uid							AS mipik_customization_type_guid_uid 	-- V
-	,cte.mipik_trek_mik_name										AS mipik_trek_mik_name					-- V
-	,cte.mipik_trek_mik_guid_uid									AS mipik_trek_mik_guid_uid				-- V
-	,cte.max_data_perenosa											AS max_data_perenosa 					-- V
-	,cte.is_oplachen_roznica										AS is_oplachen_roznica 					-- V
-	,cte.is_po_prosbe_clienta_roznica								AS is_po_prosbe_clienta_roznica 		-- V 
-	,cte.data_dostavki_dogovor_roznica								AS data_dostavki_dogovor_roznica 		-- V
-	,cte.data_dostavki_roznica										AS data_dostavki_roznica 				-- V
-	,cte.data_otsechki  											AS data_otsechki 						-- V
-	,cte.data_komplekta												AS data_komplekta 						-- V
-	,cte.data_celevaya												AS data_celevaya 						-- V
-	,cte.kommentarii_roznica										AS kommentarii_roznica					-- V
-	,cte.norma_days_dostavki_iz_voronezha							AS norma_days_dostavki_iz_voronezha		-- V
+	cte.batch_id_dttm																					AS batch_id_dttm							
+	,cte.batch_id_str																					AS batch_id_str							
+	,cte.create_dttm																					AS create_dttm
+	,cte.date_id																						AS date_id
+	,cte.order_id																						AS order_id
+	,argMax(cte.order_roznica_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))					AS order_roznica_guid_uid
+	,argMax(cte.order_roznica_doc_num, tuple(cte.data_komplekta, cte.data_otsechki))					AS order_roznica_doc_num
+	,argMax(cte.order_roznica_doc_datetime, tuple(cte.data_komplekta, cte.data_otsechki))				AS order_roznica_doc_datetime
+	,argMax(cte.unit_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))							AS unit_guid_uid
+	,argMax(cte.unit_name, tuple(cte.data_komplekta, cte.data_otsechki))								AS unit_name
+	,argMax(cte.city_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))							AS city_guid_uid
+	,argMax(cte.city_name, tuple(cte.data_komplekta, cte.data_otsechki))								AS city_name
+	,argMax(cte.full_order_id, tuple(cte.data_komplekta, cte.data_otsechki))							AS full_order_id
+	,argMax(cte.full_order_roznica_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))				AS full_order_roznica_guid_uid
+	,argMax(cte.full_order_roznica_number, tuple(cte.data_komplekta, cte.data_otsechki))				AS full_order_roznica_number
+	,argMax(cte.full_order_roznica_datetime, tuple(cte.data_komplekta, cte.data_otsechki))				AS full_order_roznica_datetime		
+	,argMax(cte.is_link_order, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_link_order
+	,argMax(cte.total_sum_total, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_total
+	,argMax(cte.source_stage_id, tuple(cte.data_komplekta, cte.data_otsechki))							AS source_stage_id
+	,''																									AS source_stage_name
+	,argMax(cte.order_stage_id, tuple(cte.data_komplekta, cte.data_otsechki))							AS order_stage_id
+	,''																									AS order_stage_name
+	,argMax(cte.order_sub_stage_id, tuple(cte.data_komplekta, cte.data_otsechki))						AS order_sub_stage_id
+	,''																									AS order_sub_stage_name
+	,argMax(cte.has_std1, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_std1
+	,argMax(cte.is_deficit_std1, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_std1
+	,argMax(cte.total_sum_std1, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_std1
+	,argMax(cte.has_std2, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_std2
+	,argMax(cte.is_deficit_std2, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_std2
+	,argMax(cte.total_sum_std2, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_std2
+	,argMax(cte.has_mip, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_mip
+	,argMax(cte.is_deficit_mip, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_mip
+	,argMax(cte.total_sum_mip, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_mip
+	,argMax(cte.has_kich, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_kich
+	,argMax(cte.is_deficit_kich, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_kich
+	,argMax(cte.total_sum_kich, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_kich
+	,argMax(cte.has_stor, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_stor
+	,argMax(cte.is_deficit_stor, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_stor
+	,argMax(cte.total_sum_stor, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_stor
+	,argMax(cte.has_matr, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_matr
+	,argMax(cte.is_deficit_matr, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_matr
+	,argMax(cte.total_sum_matr, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_matr
+	,argMax(cte.has_tech, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_tech
+	,argMax(cte.is_deficit_tech, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_tech
+	,argMax(cte.total_sum_tech, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_tech
+	,argMax(cte.has_other, tuple(cte.data_komplekta, cte.data_otsechki))								AS has_other
+	,argMax(cte.is_deficit_other, tuple(cte.data_komplekta, cte.data_otsechki))							AS is_deficit_other
+	,argMax(cte.total_sum_other, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_other
+	,argMax(cte.has_serv, tuple(cte.data_komplekta, cte.data_otsechki))									AS has_serv
+	,argMax(cte.total_sum_serv, tuple(cte.data_komplekta, cte.data_otsechki))							AS total_sum_serv
+	,argMax(cte.client_id, tuple(cte.data_komplekta, cte.data_otsechki))								AS client_id							-- V
+	,argMax(cte.client_name, tuple(cte.data_komplekta, cte.data_otsechki))								AS client_name							-- V
+	,argMax(cte.client_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))							AS client_guid_uid						-- V
+	,argMax(cte.order_phone, tuple(cte.data_komplekta, cte.data_otsechki))								AS order_phone							-- V
+	,argMax(cte.employee_id, tuple(cte.data_komplekta, cte.data_otsechki))								AS employee_id							-- V
+	,argMax(cte.employee_name, tuple(cte.data_komplekta, cte.data_otsechki))							AS employee_name						-- V
+	,argMax(cte.employee_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))						AS employee_guid_uid					-- V
+	,argMax(cte.is_mip, tuple(cte.data_komplekta, cte.data_otsechki))									AS is_mip								-- V
+	,argMax(cte.is_kitchen, tuple(cte.data_komplekta, cte.data_otsechki))								AS is_kitchen							-- V
+	,argMax(cte.mipik_status_id, tuple(cte.data_komplekta, cte.data_otsechki))							AS mipik_status_id						-- V 1 - Оплата, 2 - Дизайнер, 3 - Конструктор, 4 - Материалы, 5 - Производство, 6 - Логистика, 7 - Сервис
+	,argMax(cte.mipik_status_name, tuple(cte.data_komplekta, cte.data_otsechki))						AS mipik_status_name					-- V
+	,argMax(cte.mipik_status_order, tuple(cte.data_komplekta, cte.data_otsechki))						AS mipik_status_order					-- V
+	,argMax(cte.mipik_collection_id, tuple(cte.data_komplekta, cte.data_otsechki))						AS mipik_collection_id					-- V
+	,argMax(cte.mipik_collection_name, tuple(cte.data_komplekta, cte.data_otsechki))					AS mipik_collection_name 				-- V
+	,argMax(cte.mipik_collection_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))				AS mipik_collection_guid_uid 			-- V
+	,argMax(cte.mipik_assortiment_group_id, tuple(cte.data_komplekta, cte.data_otsechki))				AS mipik_assortiment_group_id 			-- V
+	,argMax(cte.mipik_assortiment_group_name, tuple(cte.data_komplekta, cte.data_otsechki))				AS mipik_assortiment_group_name 		-- V
+	,argMax(cte.mipik_assortiment_group_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))			AS mipik_assortiment_group_guid_uid 	-- V
+	,argMax(cte.mipik_customization_type_id, tuple(cte.data_komplekta, cte.data_otsechki))				AS mipik_customization_type_id 			-- V
+	,argMax(cte.mipik_customization_type_name, tuple(cte.data_komplekta, cte.data_otsechki))			AS mipik_customization_type_name 		-- V
+	,argMax(cte.mipik_customization_type_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))		AS mipik_customization_type_guid_uid 	-- V
+	,argMax(cte.mipik_trek_mik_name, tuple(cte.data_komplekta, cte.data_otsechki))						AS mipik_trek_mik_name					-- V
+	,argMax(cte.mipik_trek_mik_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))					AS mipik_trek_mik_guid_uid				-- V
+	,argMax(cte.max_data_perenosa, tuple(cte.data_komplekta, cte.data_otsechki))						AS max_data_perenosa 					-- V
+	,argMax(cte.is_oplachen_roznica, tuple(cte.data_komplekta, cte.data_otsechki))						AS is_oplachen_roznica 					-- V
+	,argMax(cte.is_po_prosbe_clienta_roznica, tuple(cte.data_komplekta, cte.data_otsechki))				AS is_po_prosbe_clienta_roznica 		-- V 
+	,argMax(cte.data_dostavki_dogovor_roznica, tuple(cte.data_komplekta, cte.data_otsechki))			AS data_dostavki_dogovor_roznica 		-- V
+	,argMax(cte.data_dostavki_roznica, tuple(cte.data_komplekta, cte.data_otsechki))					AS data_dostavki_roznica 				-- V
+	,argMax(cte.data_otsechki, tuple(cte.data_komplekta, cte.data_otsechki))  							AS data_otsechki 						-- V
+	,argMax(cte.data_komplekta, tuple(cte.data_komplekta, cte.data_otsechki))							AS data_komplekta 						-- V
+	,argMax(cte.data_celevaya, tuple(cte.data_komplekta, cte.data_otsechki))							AS data_celevaya 						-- V
+	,argMax(cte.kommentarii_roznica, tuple(cte.data_komplekta, cte.data_otsechki))						AS kommentarii_roznica					-- V
+	,argMax(cte.norma_days_dostavki_iz_voronezha, tuple(cte.data_komplekta, cte.data_otsechki))			AS norma_days_dostavki_iz_voronezha		-- V
 FROM
 	cte
-		
+GROUP BY
+	cte.batch_id_dttm																		
+	,cte.batch_id_str																		
+	,cte.create_dttm												
+	,cte.date_id													
+	,cte.order_id	
