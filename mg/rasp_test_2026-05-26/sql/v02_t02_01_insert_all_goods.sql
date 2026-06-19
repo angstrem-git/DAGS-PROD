@@ -59,7 +59,8 @@ cte_pkt AS
 		{{ params.db1_source }}.packet AS pkt
 	WHERE
 		-- Подразделеня-Розница -- unit_guid_OPN_str = unit_guid_CONS_str - для всех строк	
-		pkt.unit_guid_OPN_str IN (SELECT unit_guid_str FROM from_mssql.vw_unit_sale WHERE sales_direction_id = 2) 
+		pkt.unit_guid_OPN_uid IN (SELECT toUUIDOrZero(unit_guid_str) FROM from_mssql.vw_unit_sale WHERE sales_direction_id = 2) 
+		--pkt.unit_guid_OPN_str IN (SELECT unit_guid_str FROM from_mssql.vw_unit_sale WHERE sales_direction_id = 2) 
 		-- Не на страховой запас
 		AND pkt.is_strahovoj_zapas_roznica = 0
 		-- Не на выставку

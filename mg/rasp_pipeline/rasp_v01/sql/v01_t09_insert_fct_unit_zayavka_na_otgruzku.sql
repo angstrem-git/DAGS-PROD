@@ -27,7 +27,8 @@ unq AS
 		DISTINCT
 		pkt.batch_id_dttm										AS batch_id_dttm
 		,pkt.batch_id_str										AS batch_id_str
-		,toDate(pkt.datetime_id) 								AS date_id
+		,pkt.date_id											AS date_id
+		--,toDate(pkt.datetime_id) 								AS date_id
 		,pkt.unit_zayavka_na_otgruzku_guid_OPN_uid				AS unit_na_otgruzku_all_guid_OPN_uid
 		,pkt.unit_zayavka_na_otgruzku_name 						AS unit_na_otgruzku_all_name
 		,pkt.city_zayavka_na_otgruzku_guid_OPN_uid				AS city_na_otgruzku_all_guid_OPN_uid
@@ -50,8 +51,9 @@ unq AS
 	SELECT
 		DISTINCT
 		pkt.batch_id_dttm										
-		,pkt.batch_id_str										
-		,toDate(pkt.datetime_id)
+		,pkt.batch_id_str	
+		,pkt.date_id									
+		--,toDate(pkt.datetime_id)
 		,pkt.unit_otgruzki_guid_OPN_uid	
 		,pkt.unit_otgruzki_name
 		,if(
@@ -87,7 +89,8 @@ rd AS
 	SELECT 
 		pkt.batch_id_dttm										AS batch_id_dttm
 		,pkt.batch_id_str										AS batch_id_str
-		,toDate(pkt.datetime_id) 								AS date_id
+		,pkt.date_id											AS date_id
+		--,toDate(pkt.datetime_id) 								AS date_id
 		,pkt.unit_zayavka_na_otgruzku_guid_OPN_uid				AS unit_zayavka_na_otgruzku_guid_OPN_uid
 		,pkt.unit_zayavka_na_otgruzku_name						AS unit_zayavka_na_otgruzku_name
 		,pkt.city_zayavka_na_otgruzku_guid_OPN_uid				AS city_zayavka_na_otgruzku_guid_OPN_uid
@@ -112,8 +115,9 @@ rd AS
 		AND pkt.batch_id_dttm = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}'
 	GROUP BY
 		pkt.batch_id_dttm								
-		,pkt.batch_id_str								
-		,toDate(pkt.datetime_id) 						
+		,pkt.batch_id_str
+		,pkt.date_id								
+		--,toDate(pkt.datetime_id) 						
 		,pkt.unit_zayavka_na_otgruzku_guid_OPN_uid		
 		,pkt.unit_zayavka_na_otgruzku_name				
 		,pkt.city_zayavka_na_otgruzku_guid_OPN_uid		
