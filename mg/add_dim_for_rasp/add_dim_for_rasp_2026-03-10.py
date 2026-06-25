@@ -1,8 +1,11 @@
+import pendulum
 from airflow.sdk import DAG
 from airflow_clickhouse_plugin.operators.clickhouse import ClickHouseOperator	# Внешний сервис
-import pendulum
+from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
+
 
 local_tz = pendulum.timezone("Europe/Moscow")
+
 
 with DAG(
 	dag_id="add_dim_for_rasp_2026-03-10",
@@ -49,4 +52,21 @@ with DAG(
 		sql='sql/t06_insert_rasp2_unit_sale.sql'			
 	)
 
-t01 >> t02 >> t03 >> t04 >> t05 >> t06 
+	t07 = SQLExecuteQueryOperator(
+		task_id='t07_insert_for_click_open_orders_goods_history',
+		conn_id='mssql_olap_main',
+		sql="""
+    			EXECUTE [Angstrem].[for_click].[insert_open_orders_goods_history]
+        			'{{ (data_interval_end.in_timezone("Europe/Moscow") - macros.dateutil.relativedelta.relativedelta(years=1)).strftime("%Y-%m-%dT04:00:00") }}',
+        			'{{ data_interval_end.in_timezone("Europe/Moscow").strftime("%Y-%m-%dT04:00:00") }}'
+		"""			
+	)
+
+	t08 = ClickHouseOperator(
+		task_id='t08_insert_rasp2_open_orders_goods_history_rn',
+		clickhouse_conn_id='click_onpremise_airflow',
+		sql='sql/t08_insert_rasp2_open_orders_goods_history_rn.sql'			
+	)
+
+
+t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08
