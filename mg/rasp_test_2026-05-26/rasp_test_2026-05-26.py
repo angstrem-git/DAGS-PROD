@@ -209,6 +209,12 @@ with DAG(
         python_callable=print_xcom
     )
 
+    t_003 = ClickHouseOperator(
+        task_id="insert_parametry_zakaza",
+        clickhouse_conn_id="click_onpremise_airflow",
+        sql=f"sql/{RELEASE}_t_003_insert_parametry_zakaza.sql"	# Относительный путь относительно файла DAG-а
+    )
+
     t02_01 = ClickHouseOperator(
         task_id="insert_all_goods",
         clickhouse_conn_id="click_onpremise_airflow",
@@ -270,7 +276,7 @@ with DAG(
 	    } 
     )
 
-    t00 >> t_001 >> t_002 >> t02_01 >> t02_02 >> t02_03 >> t02_04 >> t02_05 >> t02_06
+    t00 >> t_001 >> t_002 >> t_003 >> t02_01 >> t02_02 >> t02_03 >> t02_04 >> t02_05 >> t02_06
 
     # test_t01 = ClickHouseOperator(
     #     task_id="insert_into_airflow_dates_test",
