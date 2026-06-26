@@ -162,4 +162,58 @@ with DAG(
 	"""
     )
 
-t_presale >> t_order >> t_sale 
+    t_goods_in_order_daily = SQLExecuteQueryOperator(
+    	task_id='t_goods_in_order_daily',
+    	conn_id='mssql_olap_main',
+    	sql=r"""
+		INSERT INTO [mg3].[goods_in_order_daily_snapshot](
+			[order_id] 
+    			,[order_doc_date] 
+    			,[order_doc_num] 
+    			,[unit_id] 
+    			,[city_id] 
+    			,[client_id] 
+    			,[employee_id]
+    			,[phone] 
+    			,[order_base_1C] 
+    			,[nomenclature_id] 
+    			,[nomenclature_property_id] 
+    			,[goods_in_order_count] 
+    			,[goods_in_order_price_sum] 
+    			,[goods_in_order_total_sum] 
+    			,[goods_in_order_auto_discount_sum] 
+    			,[goods_in_order_manual_discount_sum] 
+    			,[discount_id] 
+    			,[discount_manual_discount_reason_id] 
+    			,[discount_is_autodiscount] 
+    			,[promotion_id] 
+		)
+		SELECT 
+			[order_id]
+    			,[order_doc_date]
+    			,[order_doc_num]
+    			,[unit_id]
+    			,[city_id]
+    			,[client_id]
+    			,[employee_id]
+    			,[phone]
+    			,[order_base_1C]
+    			,[nomenclature_id]
+    			,[nomenclature_property_id]
+    			,[goods_in_order_count]
+    			,[goods_in_order_price_sum]
+    			,[goods_in_order_total_sum]
+    			,[goods_in_order_auto_discount_sum]
+    			,[goods_in_order_manual_discount_sum]
+    			,[discount_id]
+    			,[discount_manual_discount_reason_id]
+    			,[discount_is_autodiscount]
+    			,[promotion_id] 
+		FROM 
+			[Angstrem].[mg3].[vw_goods_in_order_for_discounts]
+		WHERE 
+			[order_doc_date] >= DATEADD(day, -7, CAST(GETDATE() AS date)) 
+	"""
+    )
+
+t_presale >> t_order >> t_sale >> t_goods_in_order_daily 
