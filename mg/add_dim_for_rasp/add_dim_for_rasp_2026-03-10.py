@@ -68,5 +68,20 @@ with DAG(
 		sql='sql/t08_insert_rasp2_open_orders_goods_history_rn.sql'			
 	)
 
+	t09 = SQLExecuteQueryOperator(
+		task_id='t09_insert_for_click_order_exit_goods_rn_history',
+		conn_id='mssql_olap_main',
+		sql="""
+    			EXECUTE [for_click].[insert_order_exit_goods_rn_history] 
+    			'{{ data_interval_end | ds }}'
+		"""			
+	)
 
-t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08
+	t10 = ClickHouseOperator(
+		task_id='t08_insert_rasp2_order_exit_goods_rn_history',
+		clickhouse_conn_id='click_onpremise_airflow',
+		sql='sql/t10_insert_rasp2_order_exit_goods_rn_history.sql'			
+	)
+
+
+t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10
