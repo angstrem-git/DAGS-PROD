@@ -47,8 +47,10 @@
     ,order_count 
     ,total_sum
     ,avg_price
+    ,correct_goods_in_order_id
     ,correct_order_count 
     ,correct_total_sum
+    ,sale_goods_in_sale_id
     ,sale_order_count 
     ,sale_total_sum
 )
@@ -100,8 +102,10 @@ SELECT
     ,order_count 
     ,total_sum
     ,avg_price 
+    ,correct_goods_in_order_id
     ,correct_order_count 
     ,correct_total_sum
+    ,sale_goods_in_sale_id
     ,sale_order_count 
     ,sale_total_sum
 FROM 
