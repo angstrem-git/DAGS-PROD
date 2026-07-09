@@ -40,6 +40,8 @@
     ,nomenclature_property_id
     ,nomenclature_property_guid_uid
     ,nomenclature_property_name
+    ,art_id
+    ,type_id
     ,order_count
     ,total_sum
     ,avg_price
@@ -86,6 +88,8 @@ SELECT
     ,nomenclature_property_id
     ,toUUIDOrZero(nomenclature_property_guid_str)
     ,nomenclature_property_name
+    ,art_id
+    ,type_id
     ,order_count
     ,total_sum
     ,avg_price
