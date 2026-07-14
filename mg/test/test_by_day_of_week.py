@@ -66,7 +66,7 @@ with DAG(
             {{ data_interval_end.strftime('%H:%M:%S') }}</p>    
 
         <p><b>data_interval_start :</b>
-            {{ data_interval_start }}</p>  
+            {{ data_interval_start }}: {{ data_interval_start.__class__.__name__ }}</p>  
         
         <p><b>data_interval_end :</b>
             {{ data_interval_end }}</p> 
@@ -107,8 +107,8 @@ with DAG(
         <p><b>macros.datetime.now() :</b>
             {{ macros.datetime.now() }}</p> 
         
-        <p><b>var.value.dwh_connection_string :</b>
-            {{ var.value.dwh_connection_string }}</p> 
+        <p><b>var.key.dwh_connection_string :</b>
+            {{ var.key.dwh_connection_string }}</p> 
         
         <p><b>conn.smtp_angstrem.host :</b>
             {{ conn.smtp_angstrem.host }}</p> 
