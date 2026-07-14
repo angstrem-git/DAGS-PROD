@@ -17,13 +17,13 @@ def pick_branch_by_day_of_week(**context):
     weekday = context["data_interval_end"].weekday()
 
     branches = {
-        0: "branch_monday",
-        1: "branch_tuesday",
-        2: "branch_wednesday",
-        3: "branch_thursday",
-        4: "branch_friday",
-        5: "branch_saturday",
-        6: "branch_sunday",
+        0: "send_monday_email",
+        1: "send_tuesday_email",
+        2: "send_wednesday_email",
+        3: "send_thursday_email",
+        4: "send_friday_email",
+        5: "send_saturday_email",
+        6: "send_sunday_email",
     }
 
     return branches[weekday]
@@ -38,13 +38,13 @@ with DAG(
     tags=["test"]
 ):
 
-    pick_branch = BranchPythonOperator(
+    t_pick_branch = BranchPythonOperator(
         task_id="pick_branch_id",
         python_callable=pick_branch_by_day_of_week
     )
 
-    branch_monday = EmailOperator(
-        task_id="branch_monday_id",
+    t_01_send_monday_email = EmailOperator(
+        task_id="send_monday_email",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня понедельник, {{ds}}",
@@ -56,8 +56,8 @@ with DAG(
         """,
     )
 
-    branch_tuesday = EmailOperator(
-        task_id="branch_tuesday_id",
+    t_02_send_tuesday_email = EmailOperator(
+        task_id="send_tuesday_email",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня вторник, {{ds}}",
@@ -70,8 +70,8 @@ with DAG(
         """,
     )
 
-    branch_wednesday = EmailOperator(
-        task_id="branch_wednesday_id",
+    t_03_send_wednesday_email = EmailOperator(
+        task_id="send_wednesday_email",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня среда, {{ds}}",
@@ -83,8 +83,8 @@ with DAG(
         """,
     )
 
-    branch_thursday = EmailOperator(
-        task_id="branch_thursday_id",
+    t_04_send_thursday_email = EmailOperator(
+        task_id="send_thursday_email",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня четверг, {{ds}}",
@@ -96,8 +96,8 @@ with DAG(
         """,
     )
 
-    branch_friday = EmailOperator(
-        task_id="branch_friday_id",
+    t_05_send_friday_email = EmailOperator(
+        task_id="send_friday_email",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня пятница, {{ds}}",
@@ -109,8 +109,8 @@ with DAG(
         """,
     )
 
-    branch_saturday = EmailOperator(
-        task_id="branch_saturday_id",
+    t_06_send_saturday_email = EmailOperator(
+        task_id="send_saturday_email",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня суббота, {{ds}}",
@@ -122,8 +122,8 @@ with DAG(
         """,
     )
 
-    branch_sunday = EmailOperator(
-        task_id="branch_sunday_id",
+    t_07_send_sunday_email = EmailOperator(
+        task_id="send_sunday_email",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня воскресенье, {{ds}}",
@@ -135,17 +135,17 @@ with DAG(
         """,
     )
     
-    join_branch = EmptyOperator(
+    t_join_branch = EmptyOperator(
         task_id="join_branch",
         trigger_rule=TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS
     )
 
-    pick_branch >> [
-        branch_monday, 
-        branch_tuesday, 
-        branch_wednesday, 
-        branch_thursday, 
-        branch_friday, 
-        branch_saturday, 
-        branch_sunday
-    ] >> join_branch
+    t_pick_branch >> [
+        t_01_send_monday_email, 
+        t_02_send_tuesday_email, 
+        t_03_send_wednesday_email, 
+        t_04_send_thursday_email, 
+        t_05_send_friday_email, 
+        t_06_send_saturday_email, 
+        t_07_send_sunday_email
+    ] >> t_join_branch
