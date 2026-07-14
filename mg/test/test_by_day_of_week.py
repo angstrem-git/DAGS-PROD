@@ -43,49 +43,122 @@ with DAG(
         python_callable=pick_branch_by_day_of_week
     )
 
-    branch_monday = BashOperator(
+    branch_monday = EmailOperator(
         task_id="branch_monday",
-        bash_command="echo 'mg: Сегодня Понедельник !'"
+        conn_id="smtp_angstrem",
+        to=E_MAIL,
+        subject="Сегодня понедельник",
+        html_content="<h2>mg: Сегодня Понедельник !</h2>",
     )
-
-    # branch_tuesday = BashOperator(
-    #     task_id="branch_tuesday",
-    #     bash_command="echo 'mg: Сегодня Вторник !'"
-    # )
 
     branch_tuesday = EmailOperator(
         task_id="branch_tuesday",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня вторник",
-        html_content="<h2>mg: Сегодня Вторник !</h2>",
+        subject="Сегодня вторник, {{ds}}",
+        html_content="""
+        <h2>mg: Сегодня Вторник !</h2>
+
+        <p><b>Дата выполнения:</b>
+            {{ data_interval_end.strftime('%d.%m.%Y') }}</p>
+
+        <p><b>Время выполнения:</b>
+            {{ data_interval_end.strftime('%H:%M:%S') }}</p>    
+
+        <p><b>data_interval_start :</b>
+            {{ data_interval_start }}</p>  
+        
+        <p><b>data_interval_end :</b>
+            {{ data_interval_end }}</p> 
+
+        <p><b>ds :</b>
+            {{ ds }}</p>      
+        
+        <p><b>logical_date :</b>
+            {{ logical_date }}</p>  
+        
+        <p><b>ts :</b>
+            {{ ts }}</p> 
+        
+        <p><b>run_id :</b>
+            {{ run_id }}</p> 
+        
+        <p><b>dag.dag_id :</b>
+            {{ dag.dag_id }}</p> 
+
+        <p><b>dag_run.run_type :</b>
+            {{ dag_run.run_type }}</p> 
+    
+        <p><b>dag_run.state :</b>
+            {{ dag_run.state }}</p>
+            
+        <p><b>task.task_id :</b>
+            {{ task.task_id }}</p> 
+        
+        <p><b>ti.try_number (Task Instance) :</b>
+            {{ ti.try_number }}</p> 
+        
+        <p><b>task.owner :</b>
+            {{ task.owner }}</p>   
+
+        <p><b>ti.hostname :</b>
+            {{ ti.hostname }}</p>
+
+        <p><b>ti.map_index :</b>
+            {{ ti.map_index }}</p>       
+        
+        <p><b>macros.datetime.now() :</b>
+            {{ macros.datetime.now() }}</p> 
+        
+        <p><b>var.value.dwh_connection_string :</b>
+            {{ var.value.dwh_connection_string }}</p> 
+        
+        <p><b>conn.smtp_angstrem.host :</b>
+            {{ conn.smtp_angstrem.host }}</p> 
+
+        """,
     )
 
-    branch_wednesday = BashOperator(
+    branch_wednesday = EmailOperator(
         task_id="branch_wednesday",
-        bash_command="echo 'mg: Сегодня Среда !'"
+        conn_id="smtp_angstrem",
+        to=E_MAIL,
+        subject="Сегодня среда",
+        html_content="<h2>mg: Сегодня Среда !</h2>",
     )
 
-    branch_thursday = BashOperator(
+    branch_thursday = EmailOperator(
         task_id="branch_thursday",
-        bash_command="echo 'mg: Сегодня Четверг !'"
+        conn_id="smtp_angstrem",
+        to=E_MAIL,
+        subject="Сегодня четверг",
+        html_content="<h2>mg: Сегодня Четверг !</h2>",
     )
 
-    branch_friday = BashOperator(
+    branch_friday = EmailOperator(
         task_id="branch_friday",
-        bash_command="echo 'mg: Сегодня Пятница !'"
+        conn_id="smtp_angstrem",
+        to=E_MAIL,
+        subject="Сегодня пятница",
+        html_content="<h2>mg: Сегодня Пятница !</h2>",
     )
 
-    branch_saturday = BashOperator(
+    branch_saturday = EmailOperator(
         task_id="branch_saturday",
-        bash_command="echo 'mg: Сегодня Суббота !'"
+        conn_id="smtp_angstrem",
+        to=E_MAIL,
+        subject="Сегодня суббота",
+        html_content="<h2>mg: Сегодня Суббота !</h2>",
     )
 
-    branch_sunday = BashOperator(
+    branch_sunday = EmailOperator(
         task_id="branch_sunday",
-        bash_command="echo 'mg: Сегодня Воскресенье !'"
+        conn_id="smtp_angstrem",
+        to=E_MAIL,
+        subject="Сегодня воскресенье",
+        html_content="<h2>mg: Сегодня Воскресенье !</h2>",
     )
-
+    
     join_branch = EmptyOperator(
         task_id="join_branch",
         trigger_rule=TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS
