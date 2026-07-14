@@ -59,59 +59,61 @@ with DAG(
         html_content="""
         <h2>mg: Сегодня Вторник !</h2>
 
-        <p><b>Дата выполнения:</b>
-            {{ data_interval_end.strftime('%d.%m.%Y') }}</p>
+        {% include 'test_by_day_of_week_header.html' %}
 
-        <p><b>Время выполнения:</b>
-            {{ data_interval_end.strftime('%H:%M:%S') }}</p>    
+        # <p><b>Дата выполнения:</b>
+        #     {{ data_interval_end.strftime('%d.%m.%Y') }}</p>
 
-        <p><b>data_interval_start :</b>
-            {{ data_interval_start }}: {{ data_interval_start.__class__.__name__ }}</p>  
-        
-        <p><b>data_interval_end :</b>
-            {{ data_interval_end }}</p> 
+        # <p><b>Время выполнения:</b>
+        #     {{ data_interval_end.strftime('%H:%M:%S') }}</p>    
 
-        <p><b>ds :</b>
-            {{ ds }}</p>      
+        # <p><b>data_interval_start :</b>
+        #     {{ data_interval_start }}</p>  
         
-        <p><b>logical_date :</b>
-            {{ logical_date }}</p>  
-        
-        <p><b>ts :</b>
-            {{ ts }}</p> 
-        
-        <p><b>run_id :</b>
-            {{ run_id }}</p> 
-        
-        <p><b>dag.dag_id :</b>
-            {{ dag.dag_id }}</p> 
+        # <p><b>data_interval_end :</b>
+        #     {{ data_interval_end }}</p> 
 
-        <p><b>dag_run.run_type :</b>
-            {{ dag_run.run_type }}</p> 
+        # <p><b>ds :</b>
+        #     {{ ds }}</p>      
+        
+        # <p><b>logical_date :</b>
+        #     {{ logical_date }}</p>  
+        
+        # <p><b>ts :</b>
+        #     {{ ts }}</p> 
+        
+        # <p><b>run_id :</b>
+        #     {{ run_id }}</p> 
+        
+        # <p><b>dag.dag_id :</b>
+        #     {{ dag.dag_id }}</p> 
+
+        # <p><b>dag_run.run_type :</b>
+        #     {{ dag_run.run_type }}</p> 
             
-        <p><b>task.task_id :</b>
-            {{ task.task_id }}</p> 
+        # <p><b>task.task_id :</b>
+        #     {{ task.task_id }}</p> 
         
-        <p><b>ti.try_number (Task Instance) :</b>
-            {{ ti.try_number }}</p> 
+        # <p><b>ti.try_number (Task Instance) :</b>
+        #     {{ ti.try_number }}</p> 
         
-        <p><b>task.owner :</b>
-            {{ task.owner }}</p>   
+        # <p><b>task.owner :</b>
+        #     {{ task.owner }}</p>   
 
-        <p><b>ti.hostname :</b>
-            {{ ti.hostname }}</p>
+        # <p><b>ti.hostname :</b>
+        #     {{ ti.hostname }}</p>
 
-        <p><b>ti.map_index :</b>
-            {{ ti.map_index }}</p>       
+        # <p><b>ti.map_index :</b>
+        #     {{ ti.map_index }}</p>       
         
-        <p><b>macros.datetime.now() :</b>
-            {{ macros.datetime.now() }}</p> 
+        # <p><b>macros.datetime.now() :</b>
+        #     {{ macros.datetime.now() }}</p> 
         
-        <p><b>var.key.dwh_connection_string :</b>
-            {{ var.key.dwh_connection_string }}</p> 
+        # <p><b>var.key.dwh_connection_string :</b>
+        #     {{ var.key.dwh_connection_string }}</p> 
         
-        <p><b>conn.smtp_angstrem.host :</b>
-            {{ conn.smtp_angstrem.host }}</p> 
+        # <p><b>conn.smtp_angstrem.host :</b>
+        #     {{ conn.smtp_angstrem.host }}</p> 
 
         """,
     )
