@@ -88,9 +88,6 @@ with DAG(
 
         <p><b>dag_run.run_type :</b>
             {{ dag_run.run_type }}</p> 
-    
-        <p><b>dag_run.state :</b>
-            {{ dag_run.state }}</p>
             
         <p><b>task.task_id :</b>
             {{ task.task_id }}</p> 
