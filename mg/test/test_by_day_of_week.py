@@ -6,9 +6,11 @@ from airflow.utils.trigger_rule import TriggerRule
 from airflow.providers.standard.operators.bash import BashOperator			    # Для Airflow v3
 from airflow.providers.standard.operators.python import PythonOperator			# Для Airflow v3
 from airflow.providers.standard.operators.python import BranchPythonOperator	# Для Airflow v3
+from airflow.providers.smtp.operators.smtp import EmailOperator                 # Для Airflow v3
 
 
 local_tz = pendulum.timezone("Europe/Moscow")
+E_MAIL = "M.Grapenyuk@angstrem.net"
 
 def pick_branch_by_day_of_week(**context):
 
@@ -46,9 +48,17 @@ with DAG(
         bash_command="echo 'mg: Сегодня Понедельник !'"
     )
 
-    branch_tuesday = BashOperator(
+    # branch_tuesday = BashOperator(
+    #     task_id="branch_tuesday",
+    #     bash_command="echo 'mg: Сегодня Вторник !'"
+    # )
+
+    branch_tuesday = EmailOperator(
         task_id="branch_tuesday",
-        bash_command="echo 'mg: Сегодня Вторник !'"
+        conn_id="smtp_angstrem",
+        to=E_MAIL,
+        subject="Сегодня вторник",
+        html_content="<h2>mg: Сегодня Вторник !</h2>",
     )
 
     branch_wednesday = BashOperator(
