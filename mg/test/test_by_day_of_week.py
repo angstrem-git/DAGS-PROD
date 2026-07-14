@@ -38,19 +38,17 @@ with DAG(
     tags=["test"],
 ):
 
+    # Функция pick_branch_by_day_of_week() возвращает строку с task_id задачи, 
+    # которую должен выбрать BranchPythonOperator.
+    # BranchPythonOperator не запускает эту задачу напрямую. Он:
+    # 1. Выполняет свою задачу: pick_branch_id
+    # 2. Получает результат: "send_tuesday_email"
+    # 3. Помечает остальные ветки как: skipped.
+    # Дальше уже Airflow scheduler запускает выбранную задачу.
+    # BranchPythonOperator выбирает следующую ветку по task_id, а не запускает её сам.
     t_pick_branch = BranchPythonOperator(
         task_id="pick_branch_id",
         python_callable=pick_branch_by_day_of_week,
-        description="""
-            Функция pick_branch_by_day_of_week() возвращает строку с task_id задачи, 
-            которую должен выбрать BranchPythonOperator.
-            BranchPythonOperator не запускает эту задачу напрямую. Он:
-            1. Выполняет свою задачу: pick_branch_id
-            2. Получает результат: "send_tuesday_email"
-            3. Помечает остальные ветки как: skipped.
-            Дальше уже Airflow scheduler запускает выбранную задачу.
-            BranchPythonOperator выбирает следующую ветку по task_id, а не запускает её сам.
-        """,
     )
 
     t_01_send_monday_email = EmailOperator(
@@ -145,24 +143,22 @@ with DAG(
         """,
     )
     
+    # NONE_FAILED_MIN_ONE_SUCCESS означает:
+    # Среди всех upstream-задач не должно быть ни одной с состоянием failed или upstream_failed, 
+    # и хотя бы одна задача должна завершиться успешно (success).
+    # То есть разрешённые состояния:
+    #     - success
+    #     - skipped
+    # Запрещены:
+    #     - failed
+    #     - upstream_failed
+    #     И обязательно:
+    #     - хотя бы один success
+
+    # Не использовать NONE_FAILED, т.к. для него все skipped - тоже успех!
     t_join_branch = EmptyOperator(
         task_id="join_branch",
         trigger_rule=TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS,
-        description="""
-            NONE_FAILED_MIN_ONE_SUCCESS означает:
-            Среди всех upstream-задач не должно быть ни одной с состоянием failed или upstream_failed, 
-            и хотя бы одна задача должна завершиться успешно (success).
-            То есть разрешённые состояния:
-             - success
-             - skipped
-            Запрещены:
-             - failed
-             - upstream_failed
-             И обязательно:
-              - хотя бы один success
-
-            Не использовать NONE_FAILED, т.к. для него все skipped - тоже успех!
-        """,
     )
 
     t_pick_branch >> [
