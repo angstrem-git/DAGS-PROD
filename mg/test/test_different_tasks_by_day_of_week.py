@@ -97,9 +97,9 @@ with DAG(
         task_id="t3_send_email_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Вчера - {{data_interval_end.subtract(days=1).strftime('%d.%m.%Y')}}. Задача-2",
+        subject="Позавчера - {{data_interval_end.subtract(days=2).strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
-        <h2>mg: Вчера - {{data_interval_end.subtract(days=1).strftime('%d.%m.%Y')}}.  Задача-2 !</h2>
+        <h2>mg: Позавчера - {{data_interval_end.subtract(days=2).strftime('%d.%m.%Y')}}.  Задача-2 !</h2>
         """,
     )
 
@@ -107,9 +107,9 @@ with DAG(
         task_id="t4_send_email_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Позавчера - {{data_interval_end.subtract(days=2).strftime('%d.%m.%Y')}}. Задача-2",
+        subject="Вчера - {{data_interval_end.subtract(days=1).strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
-        <h2>mg: Позавчера - {{data_interval_end.subtract(days=2).strftime('%d.%m.%Y')}}.  Задача-2 !</h2>
+        <h2>mg: Вчера - {{data_interval_end.subtract(days=1).strftime('%d.%m.%Y')}}.  Задача-2 !</h2>
         """,
     )
 
