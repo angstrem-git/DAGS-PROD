@@ -30,7 +30,7 @@ def pick_branch_by_day_of_week(**context):
 
 
 with DAG(
-    dag_id="test_by_day_of_week",
+    dag_id="test_send_email_by_day_of_week",
     description="Тестовый DAG по выбору ветки по дню недели",
     start_date=pendulum.datetime(2026, 7, 13, tz=local_tz),
     schedule="30 1 * * *",
