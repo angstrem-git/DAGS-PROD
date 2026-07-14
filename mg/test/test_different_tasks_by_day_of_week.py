@@ -77,11 +77,7 @@ with DAG(
         task_id="t1_send_email_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня -  {{
-                                data_interval_end
-                                    .in_timezone('Europe/Moscow')
-                                    .strftime('%d.%m.%Y')
-                            }}. Задача-1",
+        subject="Сегодня - {{data_interval_end.in_timezone('Europe/Moscow').strftime('%d.%m.%Y')}}. Задача-1",
         html_content="""
         <h2>mg: Сегодня -   {{
                                 data_interval_end
@@ -97,7 +93,11 @@ with DAG(
         to=E_MAIL,
         subject="Сегодня - {{data_interval_end.in_timezone('Europe/Moscow').strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
-        <h2>mg: Сегодня - {{data_interval_end.in_timezone('Europe/Moscow').strftime('%d.%m.%Y')}}.  Задача-2 !</h2>
+        <h2>mg: Сегодня -   {{
+                                data_interval_end
+                                    .in_timezone('Europe/Moscow')
+                                    .strftime('%d.%m.%Y')
+                            }}.  Задача-2 !</h2>
         """,
     )
 
@@ -107,7 +107,12 @@ with DAG(
         to=E_MAIL,
         subject="Позавчера - {{data_interval_end.in_timezone('Europe/Moscow').subtract(days=2).strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
-        <h2>mg: Позавчера - {{data_interval_end.in_timezone('Europe/Moscow').subtract(days=2).strftime('%d.%m.%Y')}}.  Задача-2 !</h2>
+        <h2>mg: Позавчера - {{
+                                data_interval_end
+                                    .in_timezone('Europe/Moscow')
+                                    .subtract(days=2)
+                                    .strftime('%d.%m.%Y')
+                            }}.  Задача-2 !</h2>
         """,
     )
 
@@ -117,7 +122,12 @@ with DAG(
         to=E_MAIL,
         subject="Вчера - {{data_interval_end.in_timezone('Europe/Moscow').subtract(days=1).strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
-        <h2>mg: Вчера - {{data_interval_end.in_timezone('Europe/Moscow').subtract(days=1).strftime('%d.%m.%Y')}}.  Задача-2 !</h2>
+        <h2>mg: Вчера - {{
+                            data_interval_end
+                                .in_timezone('Europe/Moscow')
+                                .subtract(days=1)
+                                .strftime('%d.%m.%Y')
+                        }}.  Задача-2 !</h2>
         """,
     )
 
