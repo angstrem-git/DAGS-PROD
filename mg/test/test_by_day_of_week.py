@@ -33,7 +33,7 @@ with DAG(
     dag_id="test_by_day_of_week",
     description="Тестовый DAG по выбору ветки по дню недели",
     start_date=pendulum.datetime(2026, 7, 13, tz=local_tz),
-    schedule="0 8 * * *",
+    schedule="30 1 * * *",
     catchup=False,
     tags=["test"]
 ):

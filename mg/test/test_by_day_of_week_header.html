@@ -1,14 +1,26 @@
 <p><b>Дата выполнения:</b>
     {{ data_interval_end.strftime('%d.%m.%Y') }}</p>
 
-<p><b>Время выполнения:</b>
-    {{ data_interval_end.strftime('%H:%M:%S') }}</p>    
+<p><b>Дата выполнения (in_timezone('Europe/Moscow')):</b>
+    {{ data_interval_end.in_timezone('Europe/Moscow').strftime('%d.%m.%Y') }}</p>
 
+<p><b>Время выполнения:</b>
+    {{ data_interval_end.strftime('%H:%M:%S') }}</p> 
+    
+<p><b>Время выполнения (in_timezone('Europe/Moscow')):</b>
+    {{ data_interval_end.in_timezone('Europe/Moscow').strftime('%H:%M:%S') }}</p> 
+       
 <p><b>data_interval_start :</b>
     {{ data_interval_start }}</p>  
 
+<p><b>data_interval_start (in_timezone('Europe/Moscow')):</b>
+    {{ data_interval_start.in_timezone('Europe/Moscow') }}</p>      
+
 <p><b>data_interval_end :</b>
     {{ data_interval_end }}</p> 
+
+<p><b>data_interval_end (in_timezone('Europe/Moscow')) :</b>
+    {{ data_interval_end.in_timezone('Europe/Moscow') }}</p> 
 
 <p><b>ds :</b>
     {{ ds }}</p>      
@@ -16,8 +28,14 @@
 <p><b>logical_date :</b>
     {{ logical_date }}</p>  
 
+<p><b>logical_date (in_timezone('Europe/Moscow')):</b>
+    {{ logical_date.in_timezone('Europe/Moscow') }}</p>  
+
 <p><b>ts :</b>
     {{ ts }}</p> 
+
+<p><b>ts (in_timezone('Europe/Moscow')):</b>
+    {{ ts.in_timezone('Europe/Moscow') }}</p> 
 
 <p><b>run_id :</b>
     {{ run_id }}</p> 
