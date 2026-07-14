@@ -39,20 +39,25 @@ with DAG(
 ):
 
     pick_branch = BranchPythonOperator(
-        task_id="pick_branch",
+        task_id="pick_branch_id",
         python_callable=pick_branch_by_day_of_week
     )
 
     branch_monday = EmailOperator(
-        task_id="branch_monday",
+        task_id="branch_monday_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня понедельник",
-        html_content="<h2>mg: Сегодня Понедельник !</h2>",
+        subject="Сегодня понедельник, {{ds}}",
+        html_content="""
+        <h2>mg: Сегодня Понедельник !</h2>
+
+        {% include 'test_by_day_of_week_header.html' %}
+
+        """,
     )
 
     branch_tuesday = EmailOperator(
-        task_id="branch_tuesday",
+        task_id="branch_tuesday_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
         subject="Сегодня вторник, {{ds}}",
@@ -61,47 +66,73 @@ with DAG(
 
         {% include 'test_by_day_of_week_header.html' %}
 
+        {# Так писать комментарии в Jinja; #} 
         """,
     )
 
     branch_wednesday = EmailOperator(
-        task_id="branch_wednesday",
+        task_id="branch_wednesday_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня среда",
-        html_content="<h2>mg: Сегодня Среда !</h2>",
+        subject="Сегодня среда, {{ds}}",
+        html_content="""
+        <h2>mg: Сегодня Среда !</h2>
+        
+        {% include 'test_by_day_of_week_header.html' %}
+
+        """,
     )
 
     branch_thursday = EmailOperator(
-        task_id="branch_thursday",
+        task_id="branch_thursday_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня четверг",
-        html_content="<h2>mg: Сегодня Четверг !</h2>",
+        subject="Сегодня четверг, {{ds}}",
+        html_content="""
+        <h2>mg: Сегодня Четверг !</h2>
+        
+        {% include 'test_by_day_of_week_header.html' %}
+
+        """,
     )
 
     branch_friday = EmailOperator(
-        task_id="branch_friday",
+        task_id="branch_friday_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня пятница",
-        html_content="<h2>mg: Сегодня Пятница !</h2>",
+        subject="Сегодня пятница, {{ds}}",
+        html_content="""
+        <h2>mg: Сегодня Пятница !</h2>
+        
+        {% include 'test_by_day_of_week_header.html' %}
+
+        """,
     )
 
     branch_saturday = EmailOperator(
-        task_id="branch_saturday",
+        task_id="branch_saturday_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня суббота",
-        html_content="<h2>mg: Сегодня Суббота !</h2>",
+        subject="Сегодня суббота, {{ds}}",
+        html_content="""
+        <h2>mg: Сегодня Суббота !</h2>
+        
+        {% include 'test_by_day_of_week_header.html' %}
+
+        """,
     )
 
     branch_sunday = EmailOperator(
-        task_id="branch_sunday",
+        task_id="branch_sunday_id",
         conn_id="smtp_angstrem",
         to=E_MAIL,
-        subject="Сегодня воскресенье",
-        html_content="<h2>mg: Сегодня Воскресенье !</h2>",
+        subject="Сегодня воскресенье, {{ds}}",
+        html_content="""
+        <h2>mg: Сегодня Воскресенье !</h2>
+        
+        {% include 'test_by_day_of_week_header.html' %}
+
+        """,
     )
     
     join_branch = EmptyOperator(
