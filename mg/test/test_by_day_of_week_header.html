@@ -22,20 +22,17 @@
 <p><b>data_interval_end (in_timezone('Europe/Moscow')) :</b>
     {{ data_interval_end.in_timezone('Europe/Moscow') }}</p> 
 
-<p><b>ds :</b>
-    {{ ds }}</p>      
-
 <p><b>logical_date :</b>
     {{ logical_date }}</p>  
 
 <p><b>logical_date (in_timezone('Europe/Moscow')):</b>
     {{ logical_date.in_timezone('Europe/Moscow') }}</p>  
 
+<p><b>ds :</b>
+    {{ ds }}</p>      
+
 <p><b>ts :</b>
     {{ ts }}</p> 
-
-<p><b>ts (in_timezone('Europe/Moscow')):</b>
-    {{ ts.in_timezone('Europe/Moscow') }}</p> 
 
 <p><b>run_id :</b>
     {{ run_id }}</p> 
@@ -63,6 +60,9 @@
 
 <p><b>macros.datetime.now() :</b>
     {{ macros.datetime.now() }}</p> 
+
+<p><b>macros.datetime.now() (in_timezone('Europe/Moscow')):</b>
+    {{ macros.datetime.now().in_timezone('Europe/Moscow') }}</p> 
 
 <p><b>var.value.DB1 :</b>
     {{ var.value.DB1 }}</p> 
