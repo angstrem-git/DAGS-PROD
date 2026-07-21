@@ -9,12 +9,22 @@ from airflow.providers.standard.operators.python import BranchPythonOperator	# �
 from airflow.providers.smtp.operators.smtp import EmailOperator                 # Для Airflow v3
 
 
-local_tz = pendulum.timezone("Europe/Moscow")
+LOCAL_TZ = pendulum.timezone("Europe/Moscow")
 E_MAIL = "M.Grapenyuk@angstrem.net"
+SMTP_CONN_ID = "smtp_angstrem"
+
+
+def get_data_interval_end_msk(context):
+    'Перевод в Московское время (в Airflow даты по UTC = -3 часа от Москвы)'
+    return context["data_interval_end"].in_timezone(LOCAL_TZ)
+
 
 def b01_pick_branch_by_day_of_week (**context):
 
     weekday = context["data_interval_end"].weekday()
+    # Заменить на:
+    # dt = get_data_interval_end_msk(context)
+    # weekday = dt.weekday()
 
     branches = {
         0: "t2_send_email_id",      # Понедельник
@@ -32,6 +42,9 @@ def b01_pick_branch_by_day_of_week (**context):
 def b02_pick_branch_by_day_of_week (**context):
 
     weekday = context["data_interval_end"].weekday()
+    # Заменить на:
+    # dt = get_data_interval_end_msk(context)
+    # weekday = dt.weekday()
 
     branches = {
         0: "t3_send_email_id",      # Понедельник
@@ -49,7 +62,7 @@ def b02_pick_branch_by_day_of_week (**context):
 with DAG(
     dag_id="test_different_tasks_by_day_of_week",
     description="Тестовый DAG по выбору ветки по дню недели",
-    start_date=pendulum.datetime(2026, 7, 13, tz=local_tz),
+    start_date=pendulum.datetime(2026, 7, 13, tz=LOCAL_TZ),
     schedule="30 2 * * *",
     catchup=False,
     tags=["test"],
@@ -75,7 +88,7 @@ with DAG(
 
     t1_send_email = EmailOperator(
         task_id="t1_send_email_id",
-        conn_id="smtp_angstrem",
+        conn_id=SMTP_CONN_ID,
         to=E_MAIL,
         subject="Сегодня - {{data_interval_end.in_timezone('Europe/Moscow').strftime('%d.%m.%Y')}}. Задача-1",
         html_content="""
@@ -89,7 +102,7 @@ with DAG(
     
     t2_send_email = EmailOperator(
         task_id="t2_send_email_id",
-        conn_id="smtp_angstrem",
+        conn_id=SMTP_CONN_ID,
         to=E_MAIL,
         subject="Сегодня - {{data_interval_end.in_timezone('Europe/Moscow').strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
@@ -103,7 +116,7 @@ with DAG(
 
     t3_send_email = EmailOperator(
         task_id="t3_send_email_id",
-        conn_id="smtp_angstrem",
+        conn_id=SMTP_CONN_ID,
         to=E_MAIL,
         subject="Позавчера - {{data_interval_end.in_timezone('Europe/Moscow').subtract(days=2).strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
@@ -118,7 +131,7 @@ with DAG(
 
     t4_send_email = EmailOperator(
         task_id="t4_send_email_id",
-        conn_id="smtp_angstrem",
+        conn_id=SMTP_CONN_ID,
         to=E_MAIL,
         subject="Вчера - {{data_interval_end.in_timezone('Europe/Moscow').subtract(days=1).strftime('%d.%m.%Y')}}. Задача-2",
         html_content="""
