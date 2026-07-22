@@ -83,5 +83,10 @@ with DAG(
 		sql='sql/t10_insert_rasp2_order_exit_goods_rn_history.sql'			
 	)
 
+	t11 = ClickHouseOperator(
+		task_id='t11_insert_rasp2_mg_VPointStatusIndividualOrders',
+		clickhouse_conn_id='click_onpremise_airflow',
+		sql='sql/t11_insert_rasp2_mg_VPointStatusIndividualOrders.sql'			
+	)
 
-t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10
+t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10 >> t11 

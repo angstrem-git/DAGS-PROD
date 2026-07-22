@@ -1,0 +1,85 @@
+﻿INSERT INTO rasp2.mg_VPointStatusIndividualOrders
+(
+    point_status_row_id
+	,point_date
+    ,order_guid_1C
+    ,order_num
+    ,order_date
+    ,order_sum
+    ,order_active
+    ,order_assembly
+    ,order_delivery
+    ,order_type
+    ,unit_id
+    ,city_id
+    ,unit_name
+    ,city_name
+    ,unit_guid_str
+    ,city_guid_str
+    ,customizationType_Name
+    ,order_date_prepay
+    ,order_date_construct
+    ,order_date_material
+    ,order_date_make
+    ,order_date_storage
+    ,order_date_endpoint
+    ,order_date_sale
+    ,order_date_close
+    ,order_date_delivery
+    ,order_duration_pay
+    ,order_duration_design
+    ,order_duration_construct
+    ,order_duration_material
+    ,order_duration_make
+    ,order_duration_logistic
+    ,order_duration_service
+    ,order_duration_sale
+    ,order_status_id
+    ,status_name
+    ,status_order
+    ,order_duration_status
+)
+SELECT
+    point_status_row_id
+	,point_date
+    ,order_guid_1C
+    ,order_num
+    ,order_date
+    ,order_sum
+    ,order_active
+    ,order_assembly
+    ,order_delivery
+    ,order_type
+    ,unit_id
+    ,city_id
+    ,unit_name
+    ,city_name
+    ,unit_guid_str
+    ,city_guid_str
+    ,customizationType_Name
+    ,order_date_prepay
+    ,order_date_construct
+    ,order_date_material
+    ,order_date_make
+    ,order_date_storage
+    ,order_date_endpoint
+    ,order_date_sale
+    ,order_date_close
+    ,order_date_delivery
+    ,order_duration_pay
+    ,order_duration_design
+    ,order_duration_construct
+    ,order_duration_material
+    ,order_duration_make
+    ,order_duration_logistic
+    ,order_duration_service
+    ,order_duration_sale
+    ,order_status_id
+    ,status_name
+    ,status_order
+    ,order_duration_status
+FROM 
+	from_mssql.mg_VPointStatusIndividualOrders_yesterday
+
+	
+
