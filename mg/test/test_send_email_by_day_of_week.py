@@ -3,7 +3,7 @@ from pendulum import datetime
 from airflow.sdk import DAG			
 from airflow.operators.empty import EmptyOperator			
 from airflow.utils.trigger_rule import TriggerRule		
-from airflow.providers.standard.operators.bash import BashOperator			    # Для Airflow v3
+from airflow.providers.standard.operators.bash import BashOperator			    # Для Airflow v3 (2026-07-23)
 from airflow.providers.standard.operators.python import PythonOperator			# Для Airflow v3
 from airflow.providers.standard.operators.python import BranchPythonOperator	# Для Airflow v3
 from airflow.providers.smtp.operators.smtp import EmailOperator                 # Для Airflow v3

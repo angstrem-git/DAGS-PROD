@@ -218,7 +218,7 @@ FROM
 			,status_order						AS mipik_status_order
 			,order_sum							AS mipik_order_sum
 		 FROM
-			from_mssql.mg_VPointStatusIndividualOrders 
+			from_mssql.mg_VPointStatusIndividualOrders_yesterday 
 		 WHERE
 		 	--point_date = toDate('2026-05-15')
 		 	--point_date = (SELECT date_id FROM cte_dt LIMIT 1)
