@@ -21,10 +21,10 @@ def get_data_interval_end_msk(context):
 
 def b01_pick_branch_by_day_of_week (**context):
 
-    weekday = context["data_interval_end"].weekday()
+    # weekday = context["data_interval_end"].weekday()
     # Заменить на:
-    # dt = get_data_interval_end_msk(context)
-    # weekday = dt.weekday()
+    dt = get_data_interval_end_msk(context)
+    weekday = dt.weekday()
 
     branches = {
         0: "t2_send_email_id",      # Понедельник
@@ -41,10 +41,10 @@ def b01_pick_branch_by_day_of_week (**context):
 
 def b02_pick_branch_by_day_of_week (**context):
 
-    weekday = context["data_interval_end"].weekday()
+    # weekday = context["data_interval_end"].weekday()
     # Заменить на:
-    # dt = get_data_interval_end_msk(context)
-    # weekday = dt.weekday()
+    dt = get_data_interval_end_msk(context)
+    weekday = dt.weekday()
 
     branches = {
         0: "t3_send_email_id",      # Понедельник
