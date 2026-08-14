@@ -20,7 +20,7 @@ cte_dt_rasp AS
 	--FROM rasp1_v02.packet_load_batch
 	FROM {{ params.db1 }}.packet_load_batch
 	--WHERE toDate(datetime_id) = toDate('2026-08-03')
-	WHERE batch_id_str = '{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_str") }}'	
+	WHERE batch_id_str = '{{ ti.xcom_pull(task_ids="tg_work_day_01_31_id.r_001_set_xcom_id", key="batch_id_str") }}'	
 	ORDER BY batch_id_dttm DESC
 	LIMIT 1
 )
