@@ -89,4 +89,16 @@ with DAG(
 		sql='sql/t11_insert_rasp2_mg_VPointStatusIndividualOrders.sql'			
 	)
 
-t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10 >> t11 
+	t12 = ClickHouseOperator(
+		task_id='t12_truncate_rasp2_pao_module_classification',
+		clickhouse_conn_id='click_onpremise_airflow',
+		sql='sql/t12_truncate_rasp2_pao_module_classification.sql'			
+	)
+
+	t13 = ClickHouseOperator(
+		task_id='t13_insert_rasp2_pao_module_classification',
+		clickhouse_conn_id='click_onpremise_airflow',
+		sql='sql/t13_insert_rasp2_pao_module_classification.sql'			
+	)
+
+t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10 >> t11 >> t12 >> t13 

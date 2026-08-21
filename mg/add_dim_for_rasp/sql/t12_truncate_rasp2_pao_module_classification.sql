@@ -1,0 +1,1 @@
+﻿TRUNCATE TABLE rasp2.pao_module_classification
