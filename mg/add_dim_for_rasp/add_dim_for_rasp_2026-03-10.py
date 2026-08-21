@@ -78,7 +78,7 @@ with DAG(
 	)
 
 	t10 = ClickHouseOperator(
-		task_id='t08_insert_rasp2_order_exit_goods_rn_history',
+		task_id='t10_insert_rasp2_order_exit_goods_rn_history',
 		clickhouse_conn_id='click_onpremise_airflow',
 		sql='sql/t10_insert_rasp2_order_exit_goods_rn_history.sql'			
 	)
