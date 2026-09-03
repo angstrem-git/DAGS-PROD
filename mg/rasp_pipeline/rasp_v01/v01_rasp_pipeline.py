@@ -91,7 +91,7 @@ with DAG(
     t04 = SSHOperator(
         task_id="rank_process",
         ssh_conn_id="airflowetl_ssh",
-	cmd_timeout=3600,
+        cmd_timeout=3600,
         command=f"""
             export CLICKHOUSE_URL="{URL}"
             export CLICKHOUSE_USER="{USER}"
