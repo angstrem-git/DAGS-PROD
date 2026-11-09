@@ -66,3 +66,9 @@
 
 <p><b>conn.smtp_angstrem.host :</b>
     {{ conn.smtp_angstrem.host }}</p> 
+
+<p><b>data_interval_end.in_timezone("Europe/Moscow").strftime("%Y-%m-%d") :</b>
+    {{ data_interval_end.in_timezone("Europe/Moscow").strftime("%Y-%m-%d") }}</p>  
+    
+<p><b>data_interval_end | ds :</b>
+    {{ data_interval_end | ds }}</p>  
