@@ -72,8 +72,8 @@ with DAG(
 		task_id='t09_insert_for_click_order_exit_goods_rn_history',
 		conn_id='mssql_olap_main',
 		sql="""
-    			EXECUTE [for_click].[insert_order_exit_goods_rn_history] 
-    			'{{ data_interval_end | ds }}'
+    			EXECUTE [Angstrem].[for_click].[insert_order_exit_goods_rn_history] 
+    			'{{ data_interval_end.in_timezone("Europe/Moscow").strftime("%Y-%m-%d") }}'
 		"""			
 	)
 
@@ -101,4 +101,19 @@ with DAG(
 		sql='sql/t13_insert_rasp2_pao_module_classification.sql'			
 	)
 
-t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10 >> t11 >> t12 >> t13 
+	t14 = SQLExecuteQueryOperator(
+		task_id='t14_for_click_open_orders_discounts_in_goods_rn_history',
+		conn_id='mssql_olap_main',
+		sql="""
+				EXECUTE [Angstrem].[for_click].[insert_open_orders_discounts_in_goods_rn_history] 
+				'{{ data_interval_end.in_timezone("Europe/Moscow").strftime("%Y-%m-%d") }}'
+		"""	
+	)
+
+	t15 = ClickHouseOperator(
+		task_id='t15_insert_rasp2_open_orders_discounts_in_goods_rn_history',
+		clickhouse_conn_id='click_onpremise_airflow',
+		sql='sql/t15_insert_rasp2_open_orders_discounts_in_goods_rn_history.sql'
+	)
+
+t01 >> t02 >> t03 >> t04 >> t05 >> t06 >> t07 >> t08 >> t09 >> t10 >> t11 >> t12 >> t13 >> t14 >> t15
