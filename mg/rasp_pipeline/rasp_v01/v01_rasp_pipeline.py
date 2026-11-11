@@ -99,7 +99,7 @@ with DAG(
             export CLICKHOUSE_DATABASE2="{DB2}"
             export CLICKHOUSE_DATABASE3="{DB3}"
 
-            python3 /home/airflowetl/AIRFLOW-ETL-MACHINE/rasp/rasp_v01/{RELEASE}_t04_rank_process.py \
+            python3 /home/airflowetl/AIRFLOW-ETL-MACHINE/rasp/rasp_{RELEASE}/{RELEASE}_t04_rank_process.py \
             '{{{{ ti.xcom_pull(task_ids="wait_for_batch", key="batch_id_dttm") }}}}'
         """
 		# Лучше передавать пароль через env, а не через SSH-команду command=""" python3 ... PASSWORD ... """

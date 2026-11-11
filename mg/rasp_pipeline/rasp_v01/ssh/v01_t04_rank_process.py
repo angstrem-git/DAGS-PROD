@@ -59,7 +59,7 @@ if rows == 0:
 # ==========================================================
 
 orders = defaultdict(set)
-order_sum = defaultdict(float)
+order_sum = {}
 
 for row in data["data"]:
     
@@ -68,7 +68,7 @@ for row in data["data"]:
     # Множества - защита от дублей (если в одном заказе - 2 строки с одним и тем же товаром, то в множестве товар будет один раз)
     orders[order_id].add(art_id)
     
-    # Если вес ещё не записан — записываем
+    # Если order_total_sum для total_order_id ещё не записан — записываем
     if order_id not in order_sum:
         order_sum[order_id] = float(row["order_total_sum"])
 
@@ -81,7 +81,7 @@ hit_parade_product = []
 order_rank = []
 rank = 1
 
-start_time = time.perf_counter()
+#start_time = time.perf_counter()
 
 while True:
 
@@ -104,7 +104,7 @@ while True:
 		# Обычный set — не hashable. frozenset — hashable.
 		# (4) frozenset({A, C}) - это множество (порядок не важен), без дублей, неизменяемое, пригодное как ключ или элемент множества
 		# (5) Почему не tuple(sorted(...)) ? Потому что дальше мы используем: products.issubset(S): subset-проверки удобнее с set
-        filtered = frozenset(p for p in arts if p not in removed_products)
+        filtered = frozenset(p for p in arts if p not in removed_products)	# = frozenset(arts - removed_products)
         if filtered:
             candidates.add(filtered)
 
@@ -121,21 +121,23 @@ while True:
             continue
             
         sum_sum = 0
+        orders_count = 0
 
         for order_id, arts in orders.items():
 
             # Исключаем уже удалённые товары
             filtered_order = arts - removed_products
 
-			# filtered_order.issubset(S) - это проверка, что все элементы (кортежы номенклатура-характеристика) filtered_order входят в S
+			# filtered_order.issubset(S) - это проверка, что все элементы filtered_order входят в S
 			# Не путать filtered_order.issubset(S) с filtered_order in (S). Это разные проверки.
             if filtered_order and filtered_order.issubset(S):
                 sum_sum += order_sum[order_id]
+                orders_count += 1
                 s_orders[S].append( (order_id, order_sum[order_id]) )
 
         metric = round( sum_sum / len(S), 2) if S else 0
 
-        scores[S] = (sum_sum, metric)
+        scores[S] = (sum_sum, metric, orders_count)
 
     # Находим самую "плотную" комбинацию
 	# Что такое scores?
@@ -156,13 +158,28 @@ while True:
 	# (3) Выбираем максимум по metric
     best_S = max(scores, key=lambda s: scores[s][1])
 
-    best_sum, best_metric = scores[best_S]
+    best_sum, best_metric, best_orders_count = scores[best_S]
+
+    ########################################################################################################################### mg-14.03.2026
+    sum_only_for_best = 0				# sum_only_for_best - это сумма сумм (в рублях) по тем заказам, все дефицитные пакеты которых входят в best_S
+    orders_count_only_for_best = 0		# orders_count_only_for_best - счетчик заказов, все дефицитные пакеты которых входят в best_S
+    for order_id, arts in orders.items():
+        # k.issubset(best_S) - это проверка, что все элементы k входят в best_S
+        # Не путать k.issubset(best_S) с k in (best_S). Это разные проверки.  
+        if arts.issubset(best_S):
+            sum_only_for_best += order_sum[order_id]
+            orders_count_only_for_best += 1
+        metric_only_for_best = round( sum_only_for_best / len(best_S), 2) if best_S else 0
+    ########################################################################################################################### mg-14.03.2026
 
     #print(f"Rank {rank}: {best_S} -> weight={best_sum}, metric={best_metric}")
 
     # (4) Добавляем товары в хит-парад
     for art in best_S:
-        hit_parade_product.append( (param_batch_id_dttm, rank, art, best_sum, best_metric) )
+        ########################################################################################################################### mg-14.03.2026
+        #hit_parade_product.append( (param_batch_id_dttm, rank, art, best_sum, best_metric) )		
+        hit_parade_product.append( (param_batch_id_dttm, rank, art, best_sum, best_metric, best_orders_count, sum_only_for_best, metric_only_for_best, orders_count_only_for_best) )
+		########################################################################################################################### mg-14.03.2026
         removed_products.add(art)
 
     for x in s_orders[best_S]:
@@ -178,7 +195,7 @@ order_rank = [
     for i, row in enumerate(order_rank)
 ]
 
-end_time = time.perf_counter()
+#end_time = time.perf_counter()
 
 #print(f"\nTotal time: {end_time - start_time:.4f} seconds")
 
@@ -187,11 +204,17 @@ end_time = time.perf_counter()
 # ==========================================================
 
 tsv_hit_parade_product = "\n".join(
-    f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}"
+    ########################################################################################################################### mg-14.03.2026
+    #f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}"
+    f"{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}\t{item[4]}\t{item[5]}\t{item[6]}\t{item[7]}\t{item[8]}"
+	########################################################################################################################### mg-14.03.2026
     for item in hit_parade_product
 )
 
-query_insert_hit_parade_product = f"INSERT INTO {DB2}.deficit_packet_rank (batch_id_dttm, rank_id, total_packet_art_id, sum_rank, sum_rank_per_packet) FORMAT TSV\n"
+########################################################################################################################### mg-14.03.2026
+#query_insert_hit_parade_product = f"INSERT INTO {DB2}.deficit_packet_rank (batch_id_dttm, rank_id, total_packet_art_id, sum_rank, sum_rank_per_packet) FORMAT TSV\n"
+query_insert_hit_parade_product = f"INSERT INTO {DB2}.deficit_packet_rank (batch_id_dttm, rank_id, total_packet_art_id, sum_rank, sum_rank_per_packet, orders_count_rank, sum_rank_only_this_set, sum_rank_per_packet_only_this_set, orders_count_only_for_best) FORMAT TSV\n"
+########################################################################################################################### mg-14.03.2026
 												
 if hit_parade_product:
     insert_response_hit_parade_product = requests.post(
