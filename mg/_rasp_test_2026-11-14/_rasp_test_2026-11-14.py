@@ -141,11 +141,11 @@ with DAG(
 
     with TaskGroup("tg_check_data_id") as tg_check_data:
 
-        #check_001_wait_for_batch = PythonSensor(
-        check_001_wait_for_batch = PythonOperator(						
+        check_001_wait_for_batch = PythonSensor(
+        #check_001_wait_for_batch = PythonOperator(						
             task_id="check_001_wait_for_batch_id",
-            #poke_interval=5,
-            #timeout=10,
+            poke_interval=5,
+            timeout=10,
             python_callable=wait_for_batch,
             op_kwargs={
                 "RELEASE_key": RELEASE,
