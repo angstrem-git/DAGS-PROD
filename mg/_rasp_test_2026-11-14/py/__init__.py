@@ -1,2 +1,3 @@
-﻿from .v01_t01_wait_for_batch import wait_for_batch
-from .v01_t02_check_sum import check_sum
+﻿from .v02_001_wait_for_batch import wait_for_batch
+from .v02_002_check_sum import check_sum
+from .v02_003_check_input_data import check_input_data
