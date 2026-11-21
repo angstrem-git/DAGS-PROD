@@ -8,7 +8,7 @@ import logging
 def check_sum(RELEASE_key, DAG_DIR_key, DB1_key, URL_key, USER_key, PASSWORD_key, **context):
 
     batch_id_dttm = context["ti"].xcom_pull(
-        task_ids="check_001_wait_for_batch_id",
+        task_ids="tg_check_data_id.check_001_wait_for_batch_id",
         key="batch_id_dttm"
     )
 
