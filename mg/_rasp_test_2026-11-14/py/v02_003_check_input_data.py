@@ -20,6 +20,7 @@ def check_input_data(
     hook = ClickHouseHook(clickhouse_conn_id="click_onpremise_airflow")
 
     result = hook.execute(query_text)
+    
     cnt1, cnt2, cnt3 = result[0]
 
     return (cnt1 > 0) and (cnt2 > 0) and (cnt3 > 0)
