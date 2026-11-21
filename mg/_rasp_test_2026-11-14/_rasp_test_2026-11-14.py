@@ -154,7 +154,7 @@ with DAG(
                 "URL_key": URL,
                 "USER_key": USER,
                 "PASSWORD_key": PASSWORD,
-                "DATE_ID_key": "{{ data_interval_end.in_timezone('Europe/Moscow').strftime('%Y-%m-%d') }}"
+                "DATE_ID_key": "{{ logical_date.in_timezone('Europe/Moscow').strftime('%Y-%m-%d') }}"
             }
         )
 
@@ -180,7 +180,7 @@ with DAG(
             op_kwargs={
                 "RELEASE_key": RELEASE,
                 "DAG_DIR_key": DAG_DIR,
-                "DATE_ID_key": "{{ data_interval_end.in_timezone('Europe/Moscow').strftime('%Y-%m-%d') }}"
+                "DATE_ID_key": "{{ logical_date.in_timezone('Europe/Moscow').strftime('%Y-%m-%d') }}"
             }
         )
 
@@ -188,7 +188,7 @@ with DAG(
             task_id="check_004_send_email_id",
             conn_id="smtp_angstrem",
             to=E_MAIL,
-            subject="Backfill - {{data_interval_end.in_timezone('Europe/Moscow').strftime('%Y-%m-%d')}}",
+            subject="Backfill - {{ logical_date.in_timezone('Europe/Moscow').strftime('%Y-%m-%d') }}",
             html_content="""
             <h2>Test</h2>
             <h2>batch_id_dttm = {{ ti.xcom_pull(task_ids="tg_check_data_id.check_001_wait_for_batch_id", key="batch_id_dttm") }}</h2>
