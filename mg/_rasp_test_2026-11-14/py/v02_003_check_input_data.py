@@ -1,5 +1,5 @@
 ﻿# v02_003_check_input_data.py
-from airflow.providers.clickhouse.hooks.clickhouse import ClickHouseHook
+from airflow_clickhouse_plugin.hooks.clickhouse import ClickHouseHook
 
 
 def check_input_data(

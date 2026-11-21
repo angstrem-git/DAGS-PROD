@@ -6,14 +6,14 @@ from importlib import import_module
 #module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t01_wait_for_batch")
 #wait_for_batch = getattr(module, f"{RELEASE}_001_wait_for_batch")  
 # = wait_for_batch = module.v02_001_wait_for_batch
-module = import_module(f"mg._rasp_test_2026-11-14.{RELEASE}_001_wait_for_batch")
+module = import_module(f"mg._rasp_test_2026-11-14.py.{RELEASE}_001_wait_for_batch")
 wait_for_batch = getattr(module, "wait_for_batch")  
 #module = import_module(f"mg.rasp_pipeline.rasp_{RELEASE}.py.{RELEASE}_t02_check_sum")
 #check_sum = getattr(module, "check_sum")    
-module = import_module(f"mg._rasp_test_2026-11-14.{RELEASE}_002_check_sum")
+module = import_module(f"mg._rasp_test_2026-11-14.py.{RELEASE}_002_check_sum")
 check_input_data = getattr(module, "check_sum")  
 
-module = import_module(f"mg._rasp_test_2026-11-14.{RELEASE}_003_check_input_data")
+module = import_module(f"mg._rasp_test_2026-11-14.py.{RELEASE}_003_check_input_data")
 check_input_data = getattr(module, "check_input_data") 
 
 
