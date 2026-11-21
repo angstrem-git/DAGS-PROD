@@ -144,7 +144,7 @@ with DAG(
         check_001_wait_for_batch = PythonSensor(						
             task_id="check_001_wait_for_batch_id",
             poke_interval=5,
-            timeout=600,
+            timeout=10,
             python_callable=wait_for_batch,
             op_kwargs={
                 "RELEASE_key": RELEASE,
