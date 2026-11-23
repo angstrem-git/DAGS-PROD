@@ -1,0 +1,91 @@
+﻿-- v02_009_insert_parametry_zakaza.sql
+-- {{ params.db1 }}
+INSERT INTO {{ params.db1 }}.parametry_zakaza
+--INSERT INTO rasp1_v02.parametry_zakaza
+(
+    `datetime_id` ,
+    `doc_raspredelenie` ,
+    `doc_raspredelenie_guid_1C_uid` ,
+    `doc_raspredelenie_guid_1C_str` ,
+    `row_number` ,
+    `activity` ,
+    `order_key` ,
+    `doc_order_opn` ,
+    `doc_order_opn_guid_1C_uid` ,
+    `doc_order_opn_guid_1C_str` ,
+    `doc_order_opn_number` ,
+    `doc_order_opn_datetime` ,
+    `doc_order_rn` ,
+    `doc_order_rn_guid_1C_uid` ,
+    `doc_order_rn_guid_1C_str` ,
+    `doc_order_rn_number` ,
+    `doc_order_rn_datetime` ,
+    `doc_order_fl` ,
+    `doc_order_fl_guid_1C_uid` ,
+    `doc_order_fl_guid_1C_str` ,
+    `po_prosbe_clienta` ,
+    `data_otsechki` ,
+    `data_otgruzki` ,
+    `data_dostavki` ,
+    `data_komplekta` ,
+    `data_celevaya` ,
+    `data_dop_celevaya` ,
+    `doc_osnovnoy_order` ,
+    `doc_osnovnoy_order_guid_1C_uid` ,
+    `doc_osnovnoy_order_guid_1C_str` ,
+    `prichina` ,
+    `prichina_guid_1C_uid` ,
+    `prichina_guid_1C_str` ,
+    `rezhim_izmeneniya` ,
+    `schetchik_perenosov` ,
+    `base_1C` ,
+    `is_deleted` ,
+    `create_date` 
+)
+SELECT 
+	`datetime_id` ,
+    `doc_raspredelenie` ,
+    `doc_raspredelenie_guid_1C_uid` ,
+    `doc_raspredelenie_guid_1C_str` ,
+    `row_number` ,
+    `activity` ,
+    `order_key` ,
+    `doc_order_opn` ,
+    `doc_order_opn_guid_1C_uid` ,
+    `doc_order_opn_guid_1C_str` ,
+    `doc_order_opn_number` ,
+    `doc_order_opn_datetime` ,
+    `doc_order_rn` ,
+    `doc_order_rn_guid_1C_uid` ,
+    `doc_order_rn_guid_1C_str` ,
+    `doc_order_rn_number` ,
+    `doc_order_rn_datetime` ,
+    `doc_order_fl` ,
+    `doc_order_fl_guid_1C_uid` ,
+    `doc_order_fl_guid_1C_str` ,
+    `po_prosbe_clienta` ,
+    `data_otsechki` ,
+    `data_otgruzki` ,
+    `data_dostavki` ,
+    `data_komplekta` ,
+    `data_celevaya` ,
+    `data_dop_celevaya` ,
+    `doc_osnovnoy_order` ,
+    `doc_osnovnoy_order_guid_1C_uid` ,
+    `doc_osnovnoy_order_guid_1C_str` ,
+    `prichina` ,
+    `prichina_guid_1C_uid` ,
+    `prichina_guid_1C_str` ,
+    `rezhim_izmeneniya` ,
+    `schetchik_perenosov` ,
+    `base_1C` ,
+    `is_deleted` ,
+    `create_date` 
+FROM 
+	{{ params.db1 }}.temp_parametry_zakaza
+	--rasp1_v02.temp_parametry_zakaza
+WHERE 
+	datetime_id NOT IN (SELECT DISTINCT datetime_id FROM {{ params.db1 }}.parametry_zakaza)
+	--datetime_id NOT IN (SELECT DISTINCT datetime_id FROM rasp1_v02.parametry_zakaza)
+
+	

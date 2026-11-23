@@ -41,6 +41,12 @@ def wait_for_batch(
 		value=batch_id_dttm
 	)
 
+	batch_id_str = data[0]["batch_id_str"]
+	context["ti"].xcom_push(
+		key="batch_id_str",
+		value=batch_id_str
+	)
+
 	date_id = data[0]["date_id"]
 	context["ti"].xcom_push(
 		key="date_id",
