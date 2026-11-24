@@ -569,11 +569,11 @@ SELECT
 	cte.batch_id_dttm																					AS batch_id_dttm							
 	,cte.batch_id_str																					AS batch_id_str							
 	,cte.create_dttm																					AS create_dttm
-	,cte.date_id																						AS date_id
 	-- mg-07.11.2026 - Новые поля -----------------------------------------------------------------------------------------------------------
 	,toInt64(toYYYYMMDD(cte.date_id)) * 100_000_000_000 + toInt64(cte.order_id) 						AS key_pk_dec_date_id_self_order_id
 	,toInt64(toYYYYMMDD(cte.date_id)) * 100_000_000_000 + toInt64(argMax(cte.full_order_id, tuple(cte.data_komplekta, cte.data_otsechki))) 	AS key_fk_dec_date_id_full_order_id
 	-- mg-07.11.2026 - Новые поля -----------------------------------------------------------------------------------------------------------
+	,cte.date_id																						AS date_id
 	,cte.order_id																						AS order_id
 	,argMax(cte.order_roznica_guid_uid, tuple(cte.data_komplekta, cte.data_otsechki))					AS order_roznica_guid_uid
 	,argMax(cte.order_roznica_doc_num, tuple(cte.data_komplekta, cte.data_otsechki))					AS order_roznica_doc_num
