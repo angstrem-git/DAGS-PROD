@@ -155,7 +155,7 @@ SELECT
     ) 												
 	-- mg-28.09.2026 - Новое поле -----------------------------------------------------------------------------------------------------------
 FROM 
-	{{ params.db3 }}.self_order
+	{{ params.db3 }}.self_order AS sf
 	--rasp3_v02.self_order AS sf
 WHERE
 	sf.date_id = (SELECT current_date FROM cte_dt_rasp LIMIT 1)
