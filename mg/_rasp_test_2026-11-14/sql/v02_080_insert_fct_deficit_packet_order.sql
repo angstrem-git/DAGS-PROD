@@ -136,21 +136,16 @@ cte_packets AS 				-- 38_434 строк (на 2026-10-13)
 		,toUUIDOrZero(pkt.order_roznica_guid_str) 	AS order_roznica_guid_uid
 		,pkt.doc_order_rn							AS doc_order_rn
 		,pkt.doc_order_rn_guid_1C_uid				AS doc_order_rn_guid_1C_uid
-		,pkt.doc_order_rn_guid_1C_str				AS doc_order_rn_guid_1C_str
 		,pkt.doc_order_rn_number					AS doc_order_rn_number
 		,pkt.doc_order_rn_datetime					AS doc_order_rn_datetime
 		,pkt.nomenclature_name						AS nomenclature_name
 		,pkt.nomenclature_guid_OPN_uid				AS nomenclature_guid_OPN_uid
-		,pkt.nomenclature_guid_OPN_str				AS nomenclature_guid_OPN_str
 		,pkt.nomenclature_property_name				AS nomenclature_property_name
 		,pkt.nomenclature_property_guid_OPN_uid		AS nomenclature_property_guid_OPN_uid
-		,pkt.nomenclature_property_guid_OPN_str		AS nomenclature_property_guid_OPN_str
 		,pkt.packet_name							AS packet_name
 		,pkt.packet_guid_OPN_uid					AS packet_guid_OPN_uid
-		,pkt.packet_guid_OPN_str					AS packet_guid_OPN_str
 		,pkt.packet_property_name					AS packet_property_name
 		,pkt.packet_property_guid_OPN_uid			AS packet_property_guid_OPN_uid
-		,pkt.packet_property_guid_OPN_str			AS packet_property_guid_OPN_str
 		,pkt.unit_name								AS unit_name
 		,pkt.unit_guid_OPN_uid						AS unit_guid_OPN_uid
 		,pkt.kolichestvo_dolg						AS kolichestvo_dolg
@@ -210,14 +205,10 @@ cte_def AS 				-- 14_066 строк (на 2026-10-13)
 		,any(pk.batch_id_str)							AS batch_id_str
 		,any(pk.nomenclature_name)						AS nomenclature_name
 		,any(pk.nomenclature_guid_OPN_uid)				AS nomenclature_guid_OPN_uid
-		,any(pk.nomenclature_guid_OPN_str)				AS nomenclature_guid_OPN_str
 		,any(pk.nomenclature_property_name)				AS nomenclature_property_name
 		,any(pk.nomenclature_property_guid_OPN_uid)		AS nomenclature_property_guid_OPN_uid
-		,any(pk.nomenclature_property_guid_OPN_str)		AS nomenclature_property_guid_OPN_str
 		,any(pk.packet_name)							AS packet_name
-		,any(pk.packet_guid_OPN_str)					AS packet_guid_OPN_str
 		,any(pk.packet_property_name)					AS packet_property_name
-		,any(pk.packet_property_guid_OPN_str)			AS packet_property_guid_OPN_str
 		,any(pk.unit_name)								AS unit_name
 		,any(pk.unit_guid_OPN_uid)						AS unit_guid_OPN_uid
 		,sum(pk.kolichestvo_dolg)						AS kolichestvo_dolg
