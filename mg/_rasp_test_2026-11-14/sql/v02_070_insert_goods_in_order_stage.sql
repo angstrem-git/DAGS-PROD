@@ -1189,7 +1189,7 @@ cte_module_sub_stage_iteration AS
         mb.key_fk_dec_self_order_id_art_id,
         mb.module_sub_stage_id
 )
-INSERT INTO {{ params.db3 }}s.goods_in_order_stage
+INSERT INTO {{ params.db3 }}.goods_in_order_stage
 --INSERT INTO rasp3_v02.goods_in_order_stage
 (
 	batch_id_dttm 
