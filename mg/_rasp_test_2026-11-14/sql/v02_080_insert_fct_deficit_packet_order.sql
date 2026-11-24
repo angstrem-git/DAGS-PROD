@@ -47,7 +47,8 @@ cte_full AS 				-- 2_064 строк (на 2026-10-13)
 		--dev3_v02.full_order AS fu
 		{{ params.db3 }}.full_order AS fu
 	WHERE
-		fu.batch_id_dttm = (SELECT batch_id_dttm FROM cte_dt LIMIT 1)	-- Текущее распределение
+		--fu.batch_id_dttm = (SELECT batch_id_dttm FROM cte_dt LIMIT 1)	-- Текущее распределение
+		fu.date_id = (SELECT date_id FROM cte_dt LIMIT 1)
 		AND fu.order_stage_id = 50 										-- Нет продукции
 		AND 
 		(																-- Дефицит только по Стандарт-1 и/или Стандарт-2
@@ -89,7 +90,8 @@ cte_self AS 				-- 6_511 строк (на 2026-10-13)
 		--dev3_v02.self_order AS sf  
 		{{ params.db3 }}.self_order AS sf  
 	WHERE 
-		sf.batch_id_dttm = (SELECT batch_id_dttm FROM cte_dt LIMIT 1)	-- Текущее распределение
+		--sf.batch_id_dttm = (SELECT batch_id_dttm FROM cte_dt LIMIT 1)	-- Текущее распределение
+		sf.date_id = (SELECT date_id FROM cte_dt LIMIT 1)
 	GROUP BY 
 		sf.date_id
 		,sf.order_id
