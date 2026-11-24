@@ -105,7 +105,7 @@ with DAG(
         #check_001_wait_for_batch = PythonOperator(						
             task_id="check_001_wait_for_batch_id",
             poke_interval=5,
-            timeout=20,
+            timeout=10,
             python_callable=wait_for_batch,
             op_kwargs={
                 "RELEASE_key": RELEASE,
